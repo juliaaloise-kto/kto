@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Design Sprint Agenda</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Focused Dark Mode (Black, Dark Gray #323232, Accent Red #DA0000, Active Green #00DD70) -->
+    <!-- Application Structure Plan: The application is designed as a single-page educational tool with three main sections: 1) An introduction to Design Sprints, 2) An interactive daily agenda with a dynamic Gantt chart, and 3) A reference for key concepts. The core is the tabbed agenda, allowing users to explore each day's plan without being overwhelmed. The Gantt chart provides a direct, time-based visualization of the schedule. This structure was chosen to guide the user from a general understanding to specific details, making the complex sprint process digestible and easy to navigate. The primary user flow is to select a day, view its schedule and visual timeline, and then optionally dive deeper into specific methodologies in the concepts section. -->
+    <!-- Visualization & Content Choices: 
+    - Report Info: 5-Day Sprint Process. Goal: Organize & Sequence. Viz/Presentation: Interactive tabs for each day with a dynamic HTML/CSS Gantt Chart. Interaction: Clicking a day tab regenerates the Gantt chart and content. Justification: The Gantt chart effectively visualizes duration and sequencing within the 5-hour time box, which is critical for understanding the flow of a tightly timed sprint. Library/Method: HTML/CSS/JS (Pure DOM manipulation).
+    - Report Info: Core Sprint Activities (Crazy 8s, HMW, etc.). Goal: Inform & Organize. Viz/Presentation: Accordion-style list. Interaction: Clicking a concept title expands to reveal a detailed description. Justification: Hides complexity until requested, reducing cognitive load and keeping the main interface clean. Library/Method: HTML/CSS/JS.
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #000000; /* Black background */
+        }
+        .bg-custom-dark-gray {
+            background-color: #323232; /* Custom Dark Gray for header and internal containers */
+        }
+        .border-custom-dark-gray {
+            border-color: #323232; /* Dark Gray for main dividers */
+        }
+        
+        /* Tab Styling */
+        .tab-active {
+            background-color: #00DD70; /* Active Green */
+            color: black;
+            border-color: #00DD70;
+            border-radius: 6px !important; 
+        }
+        .tab-inactive {
+            background-color: #323232; /* Custom Dark Gray */
+            color: white; 
+            border-color: #4b5563; /* Gray 600 for border */
+            border-radius: 2px !important; 
+        }
+
+        /* Gantt Chart Styling */
+        .gantt-container {
+            position: relative;
+            width: 100%;
+            max-width: 1000px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        /* Accordion Styling */
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-in-out;
+        }
+        .accordion-toggle {
+            border-radius: 6px;
+        }
+
+        /* Red Accent Overrides: Ensure #DA0000 is used for accents, but use white text for titles on dark background for contrast. */
+        .red-accent { color: #DA0000 !important; }
+        .bg-red-accent { background-color: #DA0000 !important; }
+        .bg-red-accent-light { background-color: rgba(218, 0, 0, 0.4) !important; }
+        .border-red-accent-dark { border-color: #8b0000 !important; }
+    </style>
+</head>
+<body class="text-gray-50">
+
+    <header class="bg-custom-dark-gray shadow-xl sticky top-0 z-10">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-4">
+            <h1 class="text-2xl md:text-3xl font-bold text-white">Design Sprint: The Interactive Agenda</h1>
+            <p class="text-sm md:text-base text-gray-400 mt-1 red-accent">A 5-day plan to solve big problems and test new ideas.</p>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
+        
+        <!-- INTRO SECTION (NO BOX) -->
+        <section id="intro" class="mb-12 p-4">
+            <h2 class="text-2xl font-bold mb-4 text-white">What is a Design Sprint?</h2>
+            <p class="mb-6 text-gray-300 leading-relaxed">Inspired by Google Ventures, a **Design Sprint** is a unique five-day process for validating ideas and solving big challenges through prototyping and testing ideas with customers. It's a "greatest hits" of business strategy, innovation, behavior science, and design thinking—packaged into a battle-tested process that any team can use. This interactive guide presents a condensed 5-hour daily agenda, adapted for teams collaborating across different timezones.</p>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
+                <div class="bg-red-accent-light p-4 rounded-lg">
+                    <h3 class="font-bold red-accent">Align the Team</h3>
+                    <p class="text-sm text-gray-200">Get key stakeholders in a room to agree on a clear target.</p>
+                </div>
+                <div class="bg-red-accent-light p-4 rounded-lg">
+                    <h3 class="font-bold red-accent">Generate Solutions</h3>
+                    <p class="text-sm text-gray-200">Move from abstract ideas to concrete, detailed solutions.</p>
+                </div>
+                <div class="bg-red-accent-light p-4 rounded-lg">
+                    <h3 class="font-bold red-accent">Test & Learn</h3>
+                    <p class="text-sm text-gray-200">Build a realistic prototype and get feedback from real users, fast.</p>
+                </div>
+            </div>
+        </section>
+
+        <hr class="border-custom-dark-gray my-10">
+
+        <!-- AGENDA SECTION (NO BOX) -->
+        <section id="agenda" class="mb-12 p-4">
+            <h2 class="text-2xl font-bold mb-2 text-white">The 5-Day Sprint Agenda</h2>
+            <p class="mb-6 text-gray-300">This agenda is structured for 5-hour daily sessions from October 6th to 10th, 2025, accommodating participants in Central European Time (**CET**) and Brasília Time (**BRT**).</p>
+
+            <div id="tabs-container" class="flex flex-wrap justify-center gap-2 mb-6">
+                <button data-day="monday" class="day-tab text-sm sm:text-base font-semibold py-2 px-4 border-2 transition-all duration-300"></button>
+                <button data-day="tuesday" class="day-tab text-sm sm:text-base font-semibold py-2 px-4 border-2 transition-all duration-300"></button>
+                <button data-day="wednesday" class="day-tab text-sm sm:text-base font-semibold py-2 px-4 border-2 transition-all duration-300"></button>
+                <button data-day="thursday" class="day-tab text-sm sm:text-base font-semibold py-2 px-4 border-2 transition-all duration-300"></button>
+                <button data-day="friday" class="day-tab text-sm sm:text-base font-semibold py-2 px-4 border-2 transition-all duration-300"></button>
+            </div>
+
+            <div id="gantt-visualization-wrapper" class="mb-8 bg-custom-dark-gray p-4 rounded-lg border border-gray-700">
+                <h3 class="text-lg font-semibold text-gray-300 mb-4 text-center">Daily Session Timeline (CET & BRT)</h3>
+                <div id="sprintGanttContainer" class="gantt-container">
+                    <!-- Gantt Chart will be rendered here -->
+                </div>
+            </div>
+            
+            <div id="sprint-content"></div>
+
+        </section>
+
+        <hr class="border-custom-dark-gray my-10">
+
+        <!-- CONCEPTS SECTION (NO BOX) -->
+        <section id="concepts" class="p-4">
+            <h2 class="text-2xl font-bold mb-4 text-white">Key Sprint Concepts Explained</h2>
+            <div class="space-y-2" id="accordion-container">
+            </div>
+        </section>
+
+    </main>
+    
+    <footer class="text-center py-6 text-gray-600 text-sm">
+        <p>Adapted from "Sprint" by Jake Knapp. This is an informational tool, not an official guide.</p>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const SPRINT_DURATION_MINUTES = 300; // 5 hours
+            
+            // Map the START_HOUR_CET based on the day's schedule. 
+            const START_HOUR_CET_BASE = 13;
+
+            const sprintData = {
+                monday: {
+                    name: "Mon: Map",
+                    date: "October 6, 2025",
+                    startOffsetMinutes: 0, // Starts at 13:00 CET
+                    goal: "Understand the problem and choose a focus. We'll map out the challenge and agree on a specific target for the week's efforts.",
+                    activities: [
+                        { duration: 15, title: 'Welcome & Introductions', desc: 'Align on the week’s rules and process.' },
+                        { duration: 15, title: 'Set a Long-Term Goal', desc: 'Define the optimistic goal for the project, looking months into the future.' },
+                        { duration: 15, title: 'List Sprint Questions', desc: 'Reframe obstacles as questions we can answer this week.' },
+                        { duration: 75, title: 'Ask the Experts', desc: 'Interview internal experts, stakeholders, and past users to gather critical information and context for the challenge.' },
+                        { duration: 20, title: 'BREAK', desc: 'Time to recharge.' },
+                        { duration: 60, title: 'Map the User Journey', desc: 'Create a simple flowchart of the customer’s experience, from start to finish, based on the expert interviews.' },
+                        { duration: 60, title: 'Capture & Theme Opportunities', desc: 'Capture opportunities by reframing problems as questions ("How might we..."). Then, group these notes into themes to organize the options.' },
+                        { duration: 40, title: 'Pick a Target', desc: 'The Decider chooses the most critical customer and moment on the map to focus on.' },
+                    ]
+                },
+                tuesday: {
+                    name: "Tue: Sketch",
+                    date: "October 7, 2025",
+                    startOffsetMinutes: 30, // Starts at 13:30 CET (08:30 BRT)
+                    goal: "Generate a wide range of solutions. Instead of group brainstorming, we will work individually to sketch detailed, competing ideas.",
+                    activities: [
+                        { duration: 10, title: 'Welcome & Review', desc: 'Recap Monday’s target and goals.' },
+                        
+                        // LIGHTNING DEMOS
+                        { duration: 15, title: 'Map & Assign Demo Topics', desc: 'Group: The team identifies key parts of the user map that need external inspiration and assigns these topics to individuals.' },
+                        { duration: 15, title: 'Benchmark Research', desc: 'Individual: Team members silently search for inspiring examples (inside or outside the company, and even from entirely different industries) that address their assigned topic.' },
+                        { duration: 60, title: 'Inspiration Presentations', desc: 'Group: Each person presents their best 1-2 examples (approx. 3 min each). The Facilitator notes successful patterns on the board.' },
+                        
+                        { duration: 20, title: 'BREAK', desc: 'Time to recharge.' },
+                        
+                        // 4-PART SKETCHING (PART 1)
+                        { duration: 15, title: 'Sketching Warm-up: Notes', desc: 'Individual: Review the sprint map, gathered data, and demo notes, taking notes on critical information.' },
+                        { duration: 15, title: 'Sketching Warm-up: Ideas', desc: 'Individual: Doodle and jot down rough ideas and concepts based on the notes and demos.' },
+                        { duration: 30, title: 'Concept Variation (Crazy 8s)', desc: 'Individual: Rapidly sketch 8 different variations of your strongest idea on one sheet of paper (3-4 minutes per sketch).' },
+                        
+                        // IDEA REVIEW & CLARIFICATION (Increased to 30 min)
+                        { duration: 30, title: 'Idea Review & Clarification', desc: 'Group: Participants silently review the Crazy 8s. They place a small dot on ideas they like and can ask one clarifying question about any sketch.' },
+                        
+                        // DETAILED SOLUTION SKETCH (Reduced to 30 min)
+                        { duration: 30, title: 'Detailed Solution Sketch', desc: 'Individual: Design one detailed, self-explanatory solution. The 3-panel storyboard structure is advised, but not strictly mandatory. Focus on clarity and explanation.' },
+                        
+                        // Session concludes at 18:00 CET | 13:00 BRT
+                    ]
+                },
+                wednesday: {
+                    name: "Wed: Decide",
+                    date: "October 8, 2025",
+                    startOffsetMinutes: 30, // Starts at 13:30 CET
+                    goal: "Critique the solutions and decide which ones to prototype. We will use a structured decision-making process to avoid endless debate.",
+                    activities: [
+                        { duration: 30, title: 'Art Museum & Heat Map', desc: 'Individual: **(Silent Step)** Post sketches on the wall. Team members review silently and place dot stickers on interesting parts. Place stickies with questions, but **do not defend or discuss work**.' },
+                        { duration: 50, title: 'Speed Critique', desc: 'Group: Quickly discuss the highlights of each solution, guided by the Facilitator. Capture the best parts of all sketches in notes to be used for the Storyboard.' },
+                        { duration: 20, title: 'Straw Poll', desc: 'Group: Each person silently chooses one concept and places a larger dot sticker on it, then explains their choice for 1-2 minutes.' },
+                        { duration: 10, title: 'Decider\'s Vote', desc: 'Individual: The Decider makes the final call, using **three "supervotes"** to select the winning concepts (up to three sketches might be chosen).' },
+                        { duration: 20, title: 'BREAK', desc: 'Time to recharge.' },
+                        { duration: 120, title: 'Storyboard', desc: 'Group: Map out every step of the prototype, from opening screen to the final action, to create a plan for Thursday.' },
+                    ]
+                },
+                thursday: {
+                    name: "Thu: Prototype",
+                    date: "October 9, 2025",
+                    startOffsetMinutes: 0, // Starts at 13:00 CET
+                    goal: "Build a high-fidelity prototype. We'll adopt a 'fake it' philosophy to create a realistic facade of the final product in just one day.",
+                    activities: [
+                        { duration: 20, title: 'Planning & Role Assignment', desc: 'Group: Review the storyboard and assign roles: Makers, Stitcher, Writer, etc.' },
+                        { duration: 15, title: 'Choose Prototyping Tools', desc: 'Group: Select the right software (e.g., Figma, Keynote) for the job.' },
+                        { duration: 60, title: 'Focused Prototyping (Block 1)', desc: 'Individual/Small Group: The team works in parallel to build their assigned parts of the prototype.' },
+                        { duration: 20, title: 'BREAK', desc: 'Time to recharge.' },
+                        { duration: 120, title: 'Focused Prototyping (Block 2)', desc: 'Individual/Small Group: Continue building and start stitching the pieces together.' },
+                        { duration: 45, title: 'Trial Run & Final Polish', desc: 'Group: The Stitcher does a full walkthrough to find bugs and inconsistencies. The team makes final edits.' },
+                    ]
+                },
+                friday: {
+                    name: "Fri: Test",
+                    date: "October 10, 2025",
+                    startOffsetMinutes: 70, // 14:10 CET start
+                    goal: "Test the prototype with real customers. We'll conduct five 1-on-1 interviews to get clear feedback and learn what to do next.",
+                    activities: [
+                        { duration: 20, title: 'Welcome & Tech Check', desc: 'Group: Ensure the prototype and observation room are ready.' },
+                        { duration: 20, title: 'Interview 1 & Team Debrief', desc: 'Group: One person interviews the customer (20 min max), the rest of the team watches and takes notes.' },
+                        { duration: 20, title: 'Interview 2 & Team Debrief', desc: 'Group: Second interview and note comparison.' },
+                        { duration: 20, title: 'Interview 3 & Team Debrief', desc: 'Group: Third interview and note comparison.' },
+                        { duration: 20, title: 'BREAK', desc: 'Time to recharge.' },
+                        { duration: 20, title: 'Interview 4 & Team Debrief', desc: 'Group: Fourth interview and note comparison.' },
+                        { duration: 20, title: 'Interview 5 & Team Debrief', desc: 'Group: Fifth and final interview, followed by immediate note comparison.' },
+                        { duration: 40, title: 'Pattern Finding & Next Steps', desc: 'Group: The team analyzes all notes on the whiteboard, identifies patterns, and plans the next steps post-sprint.' },
+                    ]
+                }
+            };
+
+            // Calculate exact times for dynamic days 
+            Object.keys(sprintData).forEach(dayKey => {
+                let currentTotalMinutes = START_HOUR_CET_BASE * 60 + sprintData[dayKey].startOffsetMinutes;
+                
+                sprintData[dayKey].activities.forEach(act => {
+                    const hourCET = Math.floor(currentTotalMinutes / 60);
+                    const minuteCET = currentTotalMinutes % 60;
+                    const hourBRT = hourCET - 5;
+                    
+                    act.time = `${hourCET.toString().padStart(2, '0')}:${minuteCET.toString().padStart(2, '0')} CET | ${hourBRT.toString().padStart(2, '0')}:${minuteCET.toString().padStart(2, '0')} BRT`;
+                    currentTotalMinutes += act.duration;
+                });
+            });
+
+
+            const keyConcepts = [
+                { title: 'The Decider', content: 'The official decision-maker on the sprint team, usually a project owner or executive. Their vote carries more weight to ensure clear decisions are made.' },
+                { title: 'The Facilitator', content: 'The person who manages the sprint process, keeps track of time, and ensures everyone is participating. They remain neutral on the content of discussions.' },
+                { title: 'Capture & Theme Opportunities', content: 'This step involves actively listening during expert interviews and reframing challenges as action-oriented questions, typically starting with "How Might We...?" These notes are then grouped by similarity (affinity mapping) to highlight key areas of focus.' },
+                { title: 'Lightning Demos', content: 'A quick research exercise where each team member finds and presents inspiring examples from other products or industries.' },
+                { title: 'Crazy 8s', content: 'A fast-paced sketching exercise where each person folds a piece of paper into eight sections and sketches a different idea in each section in one minute per section.' },
+                { title: 'Solution Sketch', content: 'A detailed, three-panel storyboard that illustrates a complete solution. It\'s self-explanatory, anonymous, and includes a catchy title.' },
+                { title: 'Heat Map', content: 'During silent review of the solution sketches, team members place small dot stickers next to parts of ideas they find interesting. This creates a visual "heat map" of good ideas.' },
+                { title: 'Storyboard', content: 'A step-by-step plan for the prototype. It\'s a comic-book-like sequence of 10-15 panels that shows exactly what the team will build on Thursday.' },
+            ];
+
+            const accordionContainer = document.getElementById('accordion-container');
+            keyConcepts.forEach(concept => {
+                const item = document.createElement('div');
+                item.className = 'border border-gray-700 rounded-md';
+                item.innerHTML = `
+                    <button class="accordion-toggle w-full text-left p-4 flex justify-between items-center bg-custom-dark-gray hover:bg-gray-700 transition">
+                        <span class="font-semibold red-accent">${concept.title}</span>
+                        <span class="transform transition-transform duration-300 red-accent">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                        </span>
+                    </button>
+                    <div class="accordion-content">
+                        <p class="p-4 pt-0 text-gray-400">${concept.content}</p>
+                    </div>
+                `;
+                accordionContainer.appendChild(item);
+            });
+
+            accordionContainer.addEventListener('click', e => {
+                const toggle = e.target.closest('.accordion-toggle');
+                if (toggle) {
+                    const content = toggle.nextElementSibling;
+                    const icon = toggle.querySelector('svg').parentElement;
+                    
+                    // Close all other accordions and reset icons
+                    document.querySelectorAll('.accordion-content').forEach(el => el.style.maxHeight = null);
+                    document.querySelectorAll('.accordion-toggle span.transform').forEach(el => el.classList.remove('rotate-180'));
+
+                    // Toggle current accordion
+                    if (!content.style.maxHeight || content.style.maxHeight === '0px') {
+                        content.style.maxHeight = content.scrollHeight + "px";
+                        icon.classList.add('rotate-180');
+                    } else {
+                        content.style.maxHeight = null;
+                        icon.classList.remove('rotate-180');
+                    }
+                }
+            });
+
+
+            const tabs = document.querySelectorAll('.day-tab');
+            const contentContainer = document.getElementById('sprint-content');
+            let currentDay = 'monday';
+            const ganttContainer = document.getElementById('sprintGanttContainer');
+
+            // Populate tab names
+            tabs.forEach(tab => {
+                const dayKey = tab.dataset.day;
+                tab.textContent = sprintData[dayKey].name;
+            });
+
+            function renderContent(day) {
+                const data = sprintData[day];
+                let activitiesHtml = data.activities.map(act => `
+                    <div class="flex items-start py-4 border-b border-gray-700 last:border-b-0">
+                        <div class="w-1/3 sm:w-1/4 pr-4 text-right">
+                            <p class="text-sm font-semibold text-white">${act.time.split('|')[0].trim()}</p>
+                            <p class="text-xs text-gray-400">${act.duration} min</p>
+                        </div>
+                        <div class="w-2/3 sm:w-3/4 pl-4 border-l-2 border-red-accent-dark">
+                            <h4 class="font-bold">${act.title}</h4>
+                            <p class="text-sm text-gray-400">${act.desc}</p>
+                        </div>
+                    </div>
+                `).join('');
+
+                contentContainer.innerHTML = `
+                    <div id="${day}-content" class="day-content">
+                        <h3 class="text-xl font-bold mb-2 text-white capitalize">${day} - ${data.date}</h3>
+                        <p class="mb-6 text-gray-300">${data.goal}</p>
+                        <div>${activitiesHtml}</div>
+                    </div>
+                `;
+            }
+
+            function updateGantt(day) {
+                const dayData = sprintData[day];
+                let ganttHtml = '';
+                let currentTimeMinutes = dayData.startOffsetMinutes; // Tracks the elapsed time from the start of the 13:00 CET hour (0 to 60)
+                const sessionDuration = dayData.activities.reduce((sum, act) => sum + act.duration, 0);
+
+                // 1. Time Axis (Header)
+                ganttHtml += `
+                    <div class="flex border-b border-gray-600 mb-2">
+                        <div class="w-1/6 text-xs sm:text-sm font-semibold text-gray-400">Activity</div>
+                        <div class="flex-grow flex text-xs sm:text-sm font-semibold text-gray-400">
+                            <div class="w-1/5 text-center border-l border-gray-700 leading-tight py-1">
+                                <div>13:00 CET</div>
+                                <div class="red-accent">08:00 BRT</div>
+                            </div>
+                            <div class="w-1/5 text-center border-l border-gray-700 leading-tight py-1">
+                                <div>14:00 CET</div>
+                                <div class="red-accent">09:00 BRT</div>
+                            </div>
+                            <div class="w-1/5 text-center border-l border-gray-700 leading-tight py-1">
+                                <div>15:00 CET</div>
+                                <div class="red-accent">10:00 BRT</div>
+                            </div>
+                            <div class="w-1/5 text-center border-l border-gray-700 leading-tight py-1">
+                                <div>16:00 CET</div>
+                                <div class="red-accent">11:00 BRT</div>
+                            </div>
+                            <div class="w-1/5 text-center border-l border-gray-700 leading-tight py-1">
+                                <div>17:00 CET</div>
+                                <div class="red-accent">12:00 BRT</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                // 2. Activities (Bars)
+                dayData.activities.forEach(act => {
+                    // Total minutes from 13:00 CET start (0 minutes)
+                    const barStartMinutesFromBase = currentTimeMinutes; 
+                    
+                    // Percentage calculation must use the total 5-hour window (300 min)
+                    const durationPercent = (act.duration / SPRINT_DURATION_MINUTES) * 100;
+                    const startPercent = (barStartMinutesFromBase / SPRINT_DURATION_MINUTES) * 100;
+
+                    let barColor = 'bg-red-accent';
+                    let barTextColor = 'text-white';
+                    if (act.title === 'BREAK') {
+                        barColor = 'bg-yellow-500';
+                        barTextColor = 'text-gray-900';
+                    }
+
+                    // Calculate CET end time for title tooltip/display
+                    const endMinute = START_HOUR_CET_BASE * 60 + barStartMinutesFromBase + act.duration;
+                    const endHour = Math.floor(endMinute / 60);
+                    const endMinutePart = endMinute % 60;
+                    const endTimeCET = `${endHour.toString().padStart(2, '0')}:${endMinutePart.toString().padStart(2, '0')}`;
+                    
+                    const titleShort = act.title.length > 20 ? act.title.substring(0, 17) + '...' : act.title;
+
+                    ganttHtml += `
+                        <div class="flex items-center py-1.5 border-b border-gray-800 last:border-b-0 hover:bg-gray-800 rounded-sm transition">
+                            <!-- Activity Title Column -->
+                            <div class="w-1/6 text-xs text-gray-300 font-medium overflow-hidden whitespace-nowrap pr-2">${titleShort}</div>
+                            
+                            <!-- Gantt Bar Column -->
+                            <div class="flex-grow h-6 relative" title="${act.title} | ${act.duration} min | Ends: ${endTimeCET} CET">
+                                <!-- Timeline Grid for visual reference -->
+                                <div class="absolute inset-0 flex pointer-events-none">
+                                    <div class="w-1/5 border-r border-gray-800"></div>
+                                    <div class="w-1/5 border-r border-gray-800"></div>
+                                    <div class="w-1/5 border-r border-gray-800"></div>
+                                    <div class="w-1/5 border-r border-gray-800"></div>
+                                    <div class="w-1/5"></div>
+                                </div>
+                                <div class="h-full rounded-sm ${barColor} ${barTextColor} flex items-center justify-center absolute transition-all duration-300"
+                                    style="margin-left: ${startPercent}%; width: ${durationPercent}%;">
+                                    <span class="text-[10px] sm:text-xs font-bold px-1">${act.duration}m</span>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+
+                    currentTimeMinutes += act.duration;
+                });
+                
+                ganttContainer.innerHTML = ganttHtml;
+            }
+            
+            function setActiveTab(day) {
+                tabs.forEach(tab => {
+                    if (tab.dataset.day === day) {
+                        tab.classList.remove('tab-inactive');
+                        tab.classList.add('tab-active');
+                    } else {
+                        tab.classList.remove('tab-active');
+                        tab.classList.add('tab-inactive');
+                    }
+                });
+                currentDay = day;
+                renderContent(day);
+                updateGantt(day); // Call the new Gantt update function
+            }
+
+            document.getElementById('tabs-container').addEventListener('click', (e) => {
+                if (e.target.matches('.day-tab')) {
+                    const day = e.target.dataset.day;
+                    if (day !== currentDay) {
+                        setActiveTab(day);
+                    }
+                }
+            });
+
+            setActiveTab('monday');
+        });
+    </script>
+</body>
+</html>
