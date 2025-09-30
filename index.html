@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Interactive Design Sprint Agenda</title>
+    <title>World Cup DAU Feature Discovery</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <!-- Chosen Palette: Focused Dark Mode (Black, Dark Gray #323232, Accent Red #DA0000, Active Green #00DD70) -->
-    <!-- Application Structure Plan: The application is designed as a single-page educational tool with five main sections: 1) Introduction, 2) Sprint Challenge Definition (cards styled as boxes), 3) The interactive daily agenda, 4) Participants List, and 5) Key Concepts. The Goal/Questions/Problem Statement cards now match the styling of the Gantt visualization box. -->
+    <!-- Application Structure Plan: The application is designed as a single-page educational tool with four main sections: 1) Introduction, 2) Sprint Challenge Definition, 3) The interactive daily agenda, and 4) Key Concepts. The Participants section has been removed. -->
     <!-- Visualization & Content Choices: 
     - Report Info: 5-Day Sprint Process. Goal: Organize & Sequence. Viz/Presentation: Interactive tabs for each day with a dynamic HTML/CSS Gantt Chart. Interaction: Clicking a day tab regenerates the Gantt chart and content. Justification: The Gantt chart effectively visualizes duration and sequencing within the 5-hour time box, which is critical for understanding the flow of a tightly timed sprint. Library/Method: HTML/CSS/JS (Pure DOM manipulation).
     - Report Info: Core Sprint Activities (Crazy 8s, HMW, etc.). Goal: Inform & Organize. Viz/Presentation: Accordion-style list. Interaction: Clicking a concept title expands to reveal a detailed description. Justification: Hides complexity until requested, reducing cognitive load and keeping the main interface clean. Library/Method: HTML/CSS/JS.
@@ -66,7 +66,7 @@
         .bg-red-accent-light { background-color: rgba(218, 0, 0, 0.4) !important; }
         .border-red-accent-dark { border-color: #8b0000 !important; }
 
-        /* Table specific styles for responsive stacked headers on small screens */
+        /* Table specific styles for responsive stacked headers on small screens (Kept for potential future use or consistency) */
         @media (max-width: 640px) {
             .responsive-table td:nth-child(1)::before { content: attr(data-header-a) ": "; font-weight: 600; margin-right: 4px; display: inline-block; }
             .responsive-table td:nth-child(2)::before { content: attr(data-header-b) ": "; font-weight: 600; margin-right: 4px; display: inline-block; }
@@ -81,7 +81,7 @@
 
     <header class="bg-custom-dark-gray shadow-xl sticky top-0 z-10">
         <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-4">
-            <h1 class="text-2xl md:text-3xl font-bold text-white">Design Sprint: The Interactive Agenda</h1>
+            <h1 class="text-2xl md:text-3xl font-bold text-white">World Cup DAU Feature Discovery</h1>
             <p class="text-sm md:text-base text-gray-400 mt-1 red-accent">A 5-day plan to solve big problems and test new ideas.</p>
         </div>
     </header>
@@ -173,111 +173,7 @@
         </section>
 
         <hr class="border-custom-dark-gray my-10">
-
-        <!-- PARTICIPANTS SECTION (AFTER AGENDA) -->
-        <section id="participants" class="mb-12 p-4">
-            <h2 class="text-2xl font-bold mb-4 text-white">Participants</h2>
-            <div class="space-y-4 mb-8 text-gray-300">
-                <p class="font-semibold text-white">Important: Deciders should be present throughout the sprint - at the very least, until the “Decide” stage.</p>
-                <p class="font-semibold text-white">Important #2: For the sessions to work, we need to keep it to 7 people with diverse backgrounds. This is why we don't have the whole Loyalty Squad in it. That being said, the whole team can participate as invitees to familiarize with the problem and proposed solution, even pitching in during group discussions, but not voting or actively producing.</p>
-            </div>
-
-            <div class="overflow-x-auto shadow-lg">
-                <table class="w-full text-left text-sm text-gray-400 responsive-table">
-                    <thead class="text-xs uppercase text-gray-400">
-                        <tr class="border-b border-gray-700">
-                            <th scope="col" class="py-3 px-6 w-1/4">What</th>
-                            <th scope="col" class="py-3 px-6 w-1/4">Who</th>
-                            <th scope="col" class="py-3 px-6 w-1/2">Why</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <!-- Facilitator -->
-                        <tr class="border-b border-gray-700 hover:bg-gray-900 transition">
-                            <td class="py-4 px-6 font-medium text-white whitespace-nowrap" data-header-a="Role">Facilitator</td>
-                            <td class="py-4 px-6 text-gray-300" data-header-b="Name">Pedro Cechinato</td>
-                            <td class="py-4 px-6 text-gray-300" data-header-c="Reason">He's simply the best.</td>
-                        </tr>
-                        <!-- Deciders (White text for high contrast) -->
-                        <tr class="border-b border-gray-700 hover:bg-gray-900 transition">
-                            <td class="py-4 px-6 font-medium text-white whitespace-nowrap" data-header-a="Role">Decider 1</td>
-                            <td class="py-4 px-6 text-gray-300" data-header-b="Name">Giovanni Galea</td>
-                            <td class="py-4 px-6 text-gray-300" data-header-c="Reason">Extremely involved because of CRM.</td>
-                        </tr>
-                        <tr class="border-b border-gray-700 hover:bg-gray-900 transition">
-                            <td class="py-4 px-6 font-medium text-white whitespace-nowrap" data-header-a="Role">Decider 2</td>
-                            <td class="py-4 px-6 text-gray-300" data-header-b="Name">Michael Cheadle</td>
-                            <td class="py-4 px-6 text-gray-300" data-header-c="Reason">Extremely involved because of Growth.</td>
-                        </tr>
-                        <!-- Experts -->
-                        <tr class="border-b border-gray-700 hover:bg-gray-900 transition">
-                            <td class="py-4 px-6 font-medium text-white whitespace-nowrap" data-header-a="Role">Expert 1</td>
-                            <td class="py-4 px-6 text-gray-300" data-header-b="Name">Andreas Bardun</td>
-                            <td class="py-4 px-6 text-gray-300" data-header-c="Reason">It's the CEO.</td>
-                        </tr>
-                        <tr class="border-b border-gray-700 hover:bg-gray-900 transition">
-                            <td class="py-4 px-6 font-medium text-white whitespace-nowrap" data-header-a="Role">Expert 2</td>
-                            <td class="py-4 px-6 text-gray-300" data-header-b="Name">Jeff Tabone</td>
-                            <td class="py-4 px-6 text-gray-300" data-header-c="Reason">It's the Deputy CEO.</td>
-                        </tr>
-                        <tr class="border-b border-gray-700 hover:bg-gray-900 transition">
-                            <td class="py-4 px-6 font-medium text-white whitespace-nowrap" data-header-a="Role">Expert 3</td>
-                            <td class="py-4 px-6 text-gray-300" data-header-b="Name">Thiago Geller</td>
-                            <td class="py-4 px-6 text-gray-300" data-header-c="Reason">It's our Smartico source.</td>
-                        </tr>
-                        <tr class="border-b border-gray-700 hover:bg-gray-900 transition">
-                            <td class="py-4 px-6 font-medium text-white whitespace-nowrap" data-header-a="Role">Expert 4</td>
-                            <td class="py-4 px-6 text-gray-300" data-header-b="Name">Simon Bugeja</td>
-                            <td class="py-4 px-6 text-gray-300" data-header-c="Reason">It's our Data source.</td>
-                        </tr>
-                        <tr class="border-b border-gray-700 hover:bg-gray-900 transition">
-                            <td class="py-4 px-6 font-medium text-white whitespace-nowrap" data-header-a="Role">Expert 5</td>
-                            <td class="py-4 px-6 text-gray-300" data-header-b="Name">Andreas Müller</td>
-                            <td class="py-4 px-6 text-gray-300" data-header-c="Reason">It's our Brand sentiment source.</td>
-                        </tr>
-                        <!-- Participants -->
-                        <tr class="border-b border-gray-700 hover:bg-gray-900 transition">
-                            <td class="py-4 px-6 font-medium text-white whitespace-nowrap" data-header-a="Role">Participant 1</td>
-                            <td class="py-4 px-6 text-gray-300" data-header-b="Name">Julia Miranda Aloise</td>
-                            <td class="py-4 px-6 text-gray-300" data-header-c="Reason">It's our Product Manager.</td>
-                        </tr>
-                        <tr class="border-b border-gray-700 hover:bg-gray-900 transition">
-                            <td class="py-4 px-6 font-medium text-white whitespace-nowrap" data-header-a="Role">Participant 2</td>
-                            <td class="py-4 px-6 text-gray-300" data-header-b="Name">Emerson Teixeira</td>
-                            <td class="py-4 px-6 text-gray-300" data-header-c="Reason">It's our Tech Lead.</td>
-                        </tr>
-                        <tr class="border-b border-gray-700 hover:bg-gray-900 transition">
-                            <td class="py-4 px-6 font-medium text-white whitespace-nowrap" data-header-a="Role">Participant 3</td>
-                            <td class="py-4 px-6 text-gray-300" data-header-b="Name">Joana Nummelin</td>
-                            <td class="py-4 px-6 text-gray-300" data-header-c="Reason">It's our Product Designer.</td>
-                        </tr>
-                        <tr class="border-b border-gray-700 hover:bg-gray-900 transition">
-                            <td class="py-4 px-6 font-medium text-white whitespace-nowrap" data-header-a="Role">Participant 4</td>
-                            <td class="py-4 px-6 text-gray-300" data-header-b="Name">Stevan Andric</td>
-                            <td class="py-4 px-6 text-gray-300" data-header-c="Reason">It's one of our Front-ends</td>
-                        </tr>
-                        <tr class="border-b border-gray-700 hover:bg-gray-900 transition">
-                            <td class="py-4 px-6 font-medium text-white whitespace-nowrap" data-header-a="Role">Participant 5</td>
-                            <td class="py-4 px-6 text-gray-300" data-header-b="Name">Pedro Lofaro</td>
-                            <td class="py-4 px-6 text-gray-300" data-header-c="Reason">It's our CRM expert.</td>
-                        </tr>
-                        <tr class="border-b border-gray-700 hover:bg-gray-900 transition">
-                            <td class="py-4 px-6 font-medium text-white whitespace-nowrap" data-header-a="Role">Participant 6</td>
-                            <td class="py-4 px-6 text-gray-300" data-header-b="Name">Leandro Neumann</td>
-                            <td class="py-4 px-6 text-gray-300" data-header-c="Reason">It's our Tech guru.</td>
-                        </tr>
-                        <tr class="hover:bg-gray-900 transition">
-                            <td class="py-4 px-6 font-medium text-white whitespace-nowrap" data-header-a="Role">Participant 7</td>
-                            <td class="py-4 px-6 text-gray-300" data-header-b="Name">Flávia Pires</td>
-                            <td class="py-4 px-6 text-gray-300" data-header-c="Reason">It's our source for marketing input.</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </section>
-
-        <hr class="border-custom-dark-gray my-10">
-
+        
         <!-- CONCEPTS SECTION -->
         <section id="concepts" class="p-4">
             <h2 class="text-2xl font-bold mb-4 text-white">Key Sprint Concepts Explained</h2>
