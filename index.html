@@ -9,7 +9,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <!-- Chosen Palette: Focused Dark Mode (Black, Dark Gray #323232, Accent Red #DA0000, Active Green #00DD70) -->
-    <!-- Application Structure Plan: The application is designed as a single-page educational tool with three main sections: 1) An introduction to Design Sprints, 2) An interactive daily agenda with a dynamic Gantt chart, and 3) A reference for key concepts. The core is the tabbed agenda, allowing users to explore each day's plan without being overwhelmed. The Gantt chart provides a direct, time-based visualization of the schedule. This structure was chosen to guide the user from a general understanding to specific details, making the complex sprint process digestible and easy to navigate. The primary user flow is to select a day, view its schedule and visual timeline, and then optionally dive deeper into specific methodologies in the concepts section. -->
+    <!-- Application Structure Plan: The application is designed as a single-page educational tool with five main sections: 1) Introduction, 2) Sprint Challenge Definition (cards styled as boxes), 3) The interactive daily agenda, 4) Participants List, and 5) Key Concepts. The Goal/Questions/Problem Statement cards now match the styling of the Gantt visualization box. -->
     <!-- Visualization & Content Choices: 
     - Report Info: 5-Day Sprint Process. Goal: Organize & Sequence. Viz/Presentation: Interactive tabs for each day with a dynamic HTML/CSS Gantt Chart. Interaction: Clicking a day tab regenerates the Gantt chart and content. Justification: The Gantt chart effectively visualizes duration and sequencing within the 5-hour time box, which is critical for understanding the flow of a tightly timed sprint. Library/Method: HTML/CSS/JS (Pure DOM manipulation).
     - Report Info: Core Sprint Activities (Crazy 8s, HMW, etc.). Goal: Inform & Organize. Viz/Presentation: Accordion-style list. Interaction: Clicking a concept title expands to reveal a detailed description. Justification: Hides complexity until requested, reducing cognitive load and keeping the main interface clean. Library/Method: HTML/CSS/JS.
@@ -65,6 +65,16 @@
         .bg-red-accent { background-color: #DA0000 !important; }
         .bg-red-accent-light { background-color: rgba(218, 0, 0, 0.4) !important; }
         .border-red-accent-dark { border-color: #8b0000 !important; }
+
+        /* Table specific styles for responsive stacked headers on small screens */
+        @media (max-width: 640px) {
+            .responsive-table td:nth-child(1)::before { content: attr(data-header-a) ": "; font-weight: 600; margin-right: 4px; display: inline-block; }
+            .responsive-table td:nth-child(2)::before { content: attr(data-header-b) ": "; font-weight: 600; margin-right: 4px; display: inline-block; }
+            .responsive-table td:nth-child(3)::before { content: attr(data-header-c) ": "; font-weight: 600; margin-right: 4px; display: inline-block; }
+            .responsive-table td { display: block; text-align: left !important; border-bottom: none !important; padding: 4px 16px !important; }
+            .responsive-table tr { margin-bottom: 1rem; display: block; border: 1px solid #4b5563; border-radius: 6px; }
+            .responsive-table thead { display: none; }
+        }
     </style>
 </head>
 <body class="text-gray-50">
@@ -100,7 +110,45 @@
 
         <hr class="border-custom-dark-gray my-10">
 
-        <!-- AGENDA SECTION (NO BOX) -->
+        <!-- SCOPE SECTION -->
+        <section id="scope" class="mb-12">
+            <h2 class="text-2xl font-bold mb-4 px-4 text-white">Setting the Stage: Defining Our Sprint Challenge</h2>
+            <p class="mb-8 px-4 text-gray-300">Before starting the five-day process, the team must align on the challenge's scope, the long-term goal we are aiming for, and the specific questions the sprint must answer.</p>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+                <!-- Long-Term Goal Card -->
+                <div class="bg-custom-dark-gray p-6 rounded-lg border border-gray-700 flex flex-col">
+                    <h3 class="text-lg font-bold mb-3 text-white">🎯 Long-Term Goal (The Destination)</h3>
+                    <p class="text-sm text-gray-300 leading-relaxed flex-grow">
+                        Our customers will engage with KTO daily because they'll be looking forward to an exclusive, World Cup-themed reward unlike the usual ones.
+                    </p>
+                </div>
+
+                <!-- Sprint Questions Card -->
+                <div class="bg-custom-dark-gray p-6 rounded-lg border border-gray-700 flex flex-col">
+                    <h3 class="text-lg font-bold mb-3 text-white">❓ Sprint Questions (The Obstacles)</h3>
+                    <ul class="text-sm text-gray-300 space-y-2 list-disc list-inside flex-grow">
+                        <li>What is fundamental to the experience we want to build?</li>
+                        <li>Does the card-drawing game resonate with our customers?</li>
+                        <li>What does the journey of redeeming rewards look like?</li>
+                        <li>Can we create a solution that doesn't disrupt customer behavior?</li>
+                        <li>Can an optimal solution be built in 2 quarters?</li>
+                    </ul>
+                </div>
+
+                <!-- Problem Statement Card -->
+                <div class="bg-custom-dark-gray p-6 rounded-lg border border-gray-700 flex flex-col">
+                    <h3 class="text-lg font-bold mb-3 text-white">💡 Problem Statement (The Focus)</h3>
+                    <p class="text-sm text-gray-300 leading-relaxed flex-grow">
+                        During the World Cup, innovative engagement strategies are fundamental to ensure newly acquired customers are retained after the tournament is over. A customer that logs in every day and is encouraged to explore all that KTO has to offer - Sportsbook and Casino - is more likely to remain with us. In order to do that, we can't simply inflate our current promotions, since our customers will be bombarded with new World Cup-themed content every day. Our promotions have to be exciting and unpredictable. Along the same lines, redeeming such rewards should also be a unique experience, one that is fun and straightforward, fit even for the inexperienced bettors and not disruptive for the seasoned ones.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <hr class="border-custom-dark-gray my-10">
+
+        <!-- AGENDA SECTION -->
         <section id="agenda" class="mb-12 p-4">
             <h2 class="text-2xl font-bold mb-2 text-white">The 5-Day Sprint Agenda</h2>
             <p class="mb-6 text-gray-300">This agenda is structured for 5-hour daily sessions from October 6th to 10th, 2025, accommodating participants in Central European Time (**CET**) and Brasília Time (**BRT**).</p>
@@ -126,7 +174,111 @@
 
         <hr class="border-custom-dark-gray my-10">
 
-        <!-- CONCEPTS SECTION (NO BOX) -->
+        <!-- PARTICIPANTS SECTION (AFTER AGENDA) -->
+        <section id="participants" class="mb-12 p-4">
+            <h2 class="text-2xl font-bold mb-4 text-white">Participants</h2>
+            <div class="space-y-4 mb-8 text-gray-300">
+                <p class="font-semibold text-white">Important: Deciders should be present throughout the sprint - at the very least, until the “Decide” stage.</p>
+                <p class="font-semibold text-white">Important #2: For the sessions to work, we need to keep it to 7 people with diverse backgrounds. This is why we don't have the whole Loyalty Squad in it. That being said, the whole team can participate as invitees to familiarize with the problem and proposed solution, even pitching in during group discussions, but not voting or actively producing.</p>
+            </div>
+
+            <div class="overflow-x-auto shadow-lg">
+                <table class="w-full text-left text-sm text-gray-400 responsive-table">
+                    <thead class="text-xs uppercase text-gray-400">
+                        <tr class="border-b border-gray-700">
+                            <th scope="col" class="py-3 px-6 w-1/4">What</th>
+                            <th scope="col" class="py-3 px-6 w-1/4">Who</th>
+                            <th scope="col" class="py-3 px-6 w-1/2">Why</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Facilitator -->
+                        <tr class="border-b border-gray-700 hover:bg-gray-900 transition">
+                            <td class="py-4 px-6 font-medium text-white whitespace-nowrap" data-header-a="Role">Facilitator</td>
+                            <td class="py-4 px-6 text-gray-300" data-header-b="Name">Pedro Cechinato</td>
+                            <td class="py-4 px-6 text-gray-300" data-header-c="Reason">He's simply the best.</td>
+                        </tr>
+                        <!-- Deciders (White text for high contrast) -->
+                        <tr class="border-b border-gray-700 hover:bg-gray-900 transition">
+                            <td class="py-4 px-6 font-medium text-white whitespace-nowrap" data-header-a="Role">Decider 1</td>
+                            <td class="py-4 px-6 text-gray-300" data-header-b="Name">Giovanni Galea</td>
+                            <td class="py-4 px-6 text-gray-300" data-header-c="Reason">Extremely involved because of CRM.</td>
+                        </tr>
+                        <tr class="border-b border-gray-700 hover:bg-gray-900 transition">
+                            <td class="py-4 px-6 font-medium text-white whitespace-nowrap" data-header-a="Role">Decider 2</td>
+                            <td class="py-4 px-6 text-gray-300" data-header-b="Name">Michael Cheadle</td>
+                            <td class="py-4 px-6 text-gray-300" data-header-c="Reason">Extremely involved because of Growth.</td>
+                        </tr>
+                        <!-- Experts -->
+                        <tr class="border-b border-gray-700 hover:bg-gray-900 transition">
+                            <td class="py-4 px-6 font-medium text-white whitespace-nowrap" data-header-a="Role">Expert 1</td>
+                            <td class="py-4 px-6 text-gray-300" data-header-b="Name">Andreas Bardun</td>
+                            <td class="py-4 px-6 text-gray-300" data-header-c="Reason">It's the CEO.</td>
+                        </tr>
+                        <tr class="border-b border-gray-700 hover:bg-gray-900 transition">
+                            <td class="py-4 px-6 font-medium text-white whitespace-nowrap" data-header-a="Role">Expert 2</td>
+                            <td class="py-4 px-6 text-gray-300" data-header-b="Name">Jeff Tabone</td>
+                            <td class="py-4 px-6 text-gray-300" data-header-c="Reason">It's the Deputy CEO.</td>
+                        </tr>
+                        <tr class="border-b border-gray-700 hover:bg-gray-900 transition">
+                            <td class="py-4 px-6 font-medium text-white whitespace-nowrap" data-header-a="Role">Expert 3</td>
+                            <td class="py-4 px-6 text-gray-300" data-header-b="Name">Thiago Geller</td>
+                            <td class="py-4 px-6 text-gray-300" data-header-c="Reason">It's our Smartico source.</td>
+                        </tr>
+                        <tr class="border-b border-gray-700 hover:bg-gray-900 transition">
+                            <td class="py-4 px-6 font-medium text-white whitespace-nowrap" data-header-a="Role">Expert 4</td>
+                            <td class="py-4 px-6 text-gray-300" data-header-b="Name">Simon Bugeja</td>
+                            <td class="py-4 px-6 text-gray-300" data-header-c="Reason">It's our Data source.</td>
+                        </tr>
+                        <tr class="border-b border-gray-700 hover:bg-gray-900 transition">
+                            <td class="py-4 px-6 font-medium text-white whitespace-nowrap" data-header-a="Role">Expert 5</td>
+                            <td class="py-4 px-6 text-gray-300" data-header-b="Name">Andreas Müller</td>
+                            <td class="py-4 px-6 text-gray-300" data-header-c="Reason">It's our Brand sentiment source.</td>
+                        </tr>
+                        <!-- Participants -->
+                        <tr class="border-b border-gray-700 hover:bg-gray-900 transition">
+                            <td class="py-4 px-6 font-medium text-white whitespace-nowrap" data-header-a="Role">Participant 1</td>
+                            <td class="py-4 px-6 text-gray-300" data-header-b="Name">Julia Miranda Aloise</td>
+                            <td class="py-4 px-6 text-gray-300" data-header-c="Reason">It's our Product Manager.</td>
+                        </tr>
+                        <tr class="border-b border-gray-700 hover:bg-gray-900 transition">
+                            <td class="py-4 px-6 font-medium text-white whitespace-nowrap" data-header-a="Role">Participant 2</td>
+                            <td class="py-4 px-6 text-gray-300" data-header-b="Name">Emerson Teixeira</td>
+                            <td class="py-4 px-6 text-gray-300" data-header-c="Reason">It's our Tech Lead.</td>
+                        </tr>
+                        <tr class="border-b border-gray-700 hover:bg-gray-900 transition">
+                            <td class="py-4 px-6 font-medium text-white whitespace-nowrap" data-header-a="Role">Participant 3</td>
+                            <td class="py-4 px-6 text-gray-300" data-header-b="Name">Joana Nummelin</td>
+                            <td class="py-4 px-6 text-gray-300" data-header-c="Reason">It's our Product Designer.</td>
+                        </tr>
+                        <tr class="border-b border-gray-700 hover:bg-gray-900 transition">
+                            <td class="py-4 px-6 font-medium text-white whitespace-nowrap" data-header-a="Role">Participant 4</td>
+                            <td class="py-4 px-6 text-gray-300" data-header-b="Name">Stevan Andric</td>
+                            <td class="py-4 px-6 text-gray-300" data-header-c="Reason">It's one of our Front-ends</td>
+                        </tr>
+                        <tr class="border-b border-gray-700 hover:bg-gray-900 transition">
+                            <td class="py-4 px-6 font-medium text-white whitespace-nowrap" data-header-a="Role">Participant 5</td>
+                            <td class="py-4 px-6 text-gray-300" data-header-b="Name">Pedro Lofaro</td>
+                            <td class="py-4 px-6 text-gray-300" data-header-c="Reason">It's our CRM expert.</td>
+                        </tr>
+                        <tr class="border-b border-gray-700 hover:bg-gray-900 transition">
+                            <td class="py-4 px-6 font-medium text-white whitespace-nowrap" data-header-a="Role">Participant 6</td>
+                            <td class="py-4 px-6 text-gray-300" data-header-b="Name">Leandro Neumann</td>
+                            <td class="py-4 px-6 text-gray-300" data-header-c="Reason">It's our Tech guru.</td>
+                        </tr>
+                        <tr class="hover:bg-gray-900 transition">
+                            <td class="py-4 px-6 font-medium text-white whitespace-nowrap" data-header-a="Role">Participant 7</td>
+                            <td class="py-4 px-6 text-gray-300" data-header-b="Name">Flávia Pires</td>
+                            <td class="py-4 px-6 text-gray-300" data-header-c="Reason">It's our source for marketing input.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <hr class="border-custom-dark-gray my-10">
+
+        <!-- CONCEPTS SECTION -->
         <section id="concepts" class="p-4">
             <h2 class="text-2xl font-bold mb-4 text-white">Key Sprint Concepts Explained</h2>
             <div class="space-y-2" id="accordion-container">
@@ -402,7 +554,7 @@
                     const titleShort = act.title.length > 20 ? act.title.substring(0, 17) + '...' : act.title;
 
                     ganttHtml += `
-                        <div class="flex items-center py-1.5 border-b border-gray-800 last:border-b-0 hover:bg-gray-800 rounded-sm transition">
+                        <div class="flex items-center py-1.5 border-b border-gray-800 last:border-b-0 hover:bg-gray-900 rounded-sm transition">
                             <!-- Activity Title Column -->
                             <div class="w-1/6 text-xs text-gray-300 font-medium overflow-hidden whitespace-nowrap pr-2">${titleShort}</div>
                             
