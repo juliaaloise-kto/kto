@@ -1,0 +1,1034 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KTO H2 2026 — Opportunity-Solution Tree</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --red: #da0000;
+  --yellow: #fad749;
+  --green: #00dd70;
+  --grey: #505050;
+  --ease: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  --dur: 0.72s;
+}
+body {
+  font-family: 'Inter', sans-serif;
+  background: #eceef2;
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  -webkit-font-smoothing: antialiased;
+}
+.header {
+  display: flex; align-items: center;
+  padding: 0 32px; height: 52px; flex-shrink: 0; gap: 16px;
+  background: #000; border-bottom: 2px solid var(--red); z-index: 20;
+}
+.header-logo img { height: 19px; display: block; }
+.header-sep { width: 1px; height: 18px; background: rgba(255,255,255,0.14); }
+.header-title { font-size: 12px; font-weight: 500; color: #9b9b9b; }
+.header-back {
+  display: none; align-items: center; gap: 6px;
+  font-size: 11px; font-weight: 600; color: rgba(255,255,255,0.55);
+  cursor: pointer; padding: 4px 0; transition: color 0.2s; user-select: none;
+}
+.header-back:hover { color: rgba(255,255,255,0.9); }
+.header-back svg { flex-shrink: 0; }
+.header-crumb { font-size: 11px; font-weight: 500; color: rgba(255,255,255,0.35); }
+.header-crumb span { color: rgba(255,255,255,0.7); }
+.header-right { margin-left: auto; display: flex; align-items: center; gap: 12px; }
+.header-badge {
+  font-size: 9px; font-weight: 800; color: var(--red);
+  border: 1.5px solid var(--red); padding: 2px 9px; border-radius: 2px;
+  letter-spacing: 1.2px; text-transform: uppercase;
+}
+
+/* Stage */
+#stage {
+  flex: 1; position: relative; overflow: hidden;
+}
+#svg-lines {
+  position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+  pointer-events: none; overflow: visible;
+  transition: opacity 0.35s ease;
+}
+
+/* Node base */
+.node {
+  position: absolute;
+  border-radius: 14px;
+  will-change: top, left, width, opacity, transform;
+  transition:
+    top    var(--dur) var(--ease),
+    left   var(--dur) var(--ease),
+    width  var(--dur) var(--ease),
+    height var(--dur) var(--ease),
+    opacity 0.3s ease,
+    transform var(--dur) var(--ease);
+  overflow: hidden;
+}
+.node.clickable { cursor: pointer; }
+.node.clickable:hover { filter: brightness(1.04); }
+.node.gone { opacity: 0 !important; pointer-events: none; transform: scale(0.88) !important; }
+.node.greyed { opacity: 0.22; }
+.node.greyed.clickable:hover { opacity: 0.48; }
+.node.incoming { animation: nodeIn 0.5s var(--ease) both; }
+@keyframes nodeIn {
+  from { opacity: 0; transform: translateX(24px) scale(0.95); }
+  to   { opacity: 1; transform: translateX(0) scale(1); }
+}
+
+/* Objective */
+.node-obj {
+  background: rgba(255,255,255,0.92);
+  border: 1px solid rgba(255,255,255,0.65);
+  border-left: 4px solid var(--red);
+  box-shadow: 0 4px 22px rgba(218,0,0,0.07), 0 2px 8px rgba(0,0,0,0.07);
+}
+/* KR */
+.node-kr {
+  background: rgba(13,13,19,0.93);
+  border: 1px solid rgba(255,255,255,0.09);
+  border-left: 4px solid var(--yellow);
+  box-shadow: 0 4px 18px rgba(0,0,0,0.22);
+}
+/* Opportunity */
+.node-opp {
+  background: rgba(255,255,255,0.78);
+  border: 1px solid rgba(255,255,255,0.55);
+  border-left: 3px solid rgba(80,80,80,0.4);
+  box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+}
+/* Solution */
+.node-sol {
+  background: rgba(255,255,255,0.68);
+  border: 1px solid rgba(255,255,255,0.5);
+  border-left: 3px solid rgba(0,200,100,0.52);
+  box-shadow: 0 1px 7px rgba(0,0,0,0.04);
+}
+.node-sol.tbd {
+  border-left-color: rgba(100,100,120,0.22);
+  background: rgba(246,246,250,0.62);
+}
+
+/* Card inner */
+.n-pad { padding: 14px 17px; }
+.n-code {
+  font-size: 8.5px; font-weight: 800;
+  letter-spacing: 2px; text-transform: uppercase; margin-bottom: 5px;
+}
+.node-obj .n-code { color: var(--red); opacity: 0.85; }
+.node-kr  .n-code { color: rgba(250,215,73,0.6); }
+.node-opp .n-code { color: #b0b0b8; }
+.node-sol .n-code { color: #007235; opacity: 0.7; }
+.node-sol.tbd .n-code { color: #b0b0b8; }
+
+.n-title { line-height: 1.45; }
+.node-obj .n-title { font-size: 13px; font-weight: 800; text-transform: uppercase; color: #1a1a1a; letter-spacing: -0.1px; }
+.node-kr  .n-title { font-size: 12px; font-weight: 500; color: rgba(255,255,255,0.88); }
+.node-opp .n-title { font-size: 11.5px; font-weight: 400; color: #1a1a1a; }
+.node-sol .n-title { font-size: 11.5px; font-weight: 400; color: #1a1a1a; }
+.node-sol.tbd .n-title { font-size: 11px; font-style: italic; color: #8e8e93; }
+
+.n-num { color: var(--yellow); font-weight: 900; }
+
+/* Legend */
+.legend {
+  display: flex; align-items: center; gap: 0;
+  padding: 0 32px; height: 33px; flex-shrink: 0;
+  background: rgba(255,255,255,0.78); backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(0,0,0,0.07); z-index: 10;
+}
+.leg { display: flex; align-items: center; gap: 5px;
+  font-size: 9px; font-weight: 700; letter-spacing: 0.7px; text-transform: uppercase;
+  padding: 2px 10px 2px 8px; border-radius: 10px; }
+.leg-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+.leg.l-obj { color: var(--red); } .leg.l-obj .leg-dot { background: var(--red); }
+.leg.l-kr  { color: #8a6a00; }  .leg.l-kr  .leg-dot { background: var(--yellow); }
+.leg.l-opp { color: var(--grey); } .leg.l-opp .leg-dot { background: var(--grey); }
+.leg.l-sol { color: #007235; } .leg.l-sol .leg-dot { background: var(--green); }
+.leg-arr { color: #d0d0d5; font-size: 11px; margin: 0 3px; }
+
+/* Introduction tab in header */
+.intro-tab {
+  font-size: 9.5px; font-weight: 700; letter-spacing: 1px;
+  text-transform: uppercase; color: rgba(255,255,255,0.5);
+  cursor: pointer; padding: 4px 11px;
+  border: 1px solid rgba(255,255,255,0.16); border-radius: 3px;
+  transition: all 0.2s; user-select: none; flex-shrink: 0;
+}
+.intro-tab:hover { color: rgba(255,255,255,0.85); border-color: rgba(255,255,255,0.35); }
+.intro-tab.open  { color: #fff; border-color: rgba(255,255,255,0.55); background: rgba(255,255,255,0.1); }
+
+/* Side drawer */
+.drawer {
+  position: fixed;
+  top: 85px; right: 0; bottom: 0; /* below header (52) + legend (33) */
+  width: 440px;
+  background: rgba(255,255,255,0.97);
+  backdrop-filter: blur(24px);
+  border-left: 1px solid rgba(0,0,0,0.09);
+  box-shadow: -6px 0 32px rgba(0,0,0,0.10);
+  z-index: 50;
+  transform: translateX(100%);
+  transition: transform 0.48s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  overflow-y: auto;
+  padding: 36px 36px 48px;
+}
+.drawer.open { transform: translateX(0); }
+
+.drawer-heading {
+  font-size: 18px; font-weight: 800; color: #1c1c1e;
+  letter-spacing: -0.2px; margin-bottom: 16px;
+}
+.drawer p {
+  font-size: 13px; line-height: 1.75; color: #3a3a3c;
+  font-weight: 400; margin-bottom: 14px;
+}
+.drawer p:last-child { margin-bottom: 0; }
+.drawer strong { font-weight: 700; color: #1c1c1e; }
+.drawer-question {
+  background: rgba(0,0,0,0.03);
+  border-left: 3px solid #1c1c1e;
+  border-radius: 0 6px 6px 0;
+  padding: 12px 16px;
+  margin-bottom: 14px !important;
+}
+.drawer-section { margin-bottom: 36px; }
+
+
+/* Bottom sheet */
+.bottom-sheet {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  background: rgba(255,255,255,0.97);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-top: 1px solid rgba(0,0,0,0.08);
+  box-shadow: 0 -8px 36px rgba(0,0,0,0.10);
+  z-index: 100;
+  transform: translateY(100%);
+  transition: transform 0.44s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  padding: 0 48px 28px;
+}
+.bottom-sheet.open { transform: translateY(0); }
+.bs-handle {
+  width: 36px; height: 4px; border-radius: 2px;
+  background: rgba(0,0,0,0.12);
+  margin: 12px auto 18px;
+}
+.bs-label {
+  font-size: 8.5px; font-weight: 800; letter-spacing: 2px;
+  text-transform: uppercase; color: #8e8e93; margin-bottom: 5px;
+}
+.bs-title {
+  font-size: 13px; font-weight: 700; color: #1c1c1e;
+  margin-bottom: 10px; line-height: 1.4;
+}
+.bs-body {
+  font-size: 12.5px; line-height: 1.72; color: #3a3a3c; font-weight: 400;
+}
+
+/* Hint */
+.hint {
+  position: absolute; bottom: 28px; left: 50%; transform: translateX(-50%);
+  font-size: 10.5px; font-weight: 600; color: #aeaeb2; letter-spacing: 0.3px;
+  pointer-events: none; transition: opacity 0.4s;
+  white-space: nowrap;
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-logo">
+    <img src="https://di8m9w6rqrh5d.cloudfront.net/dSX8G756SSYx6WsYQIWuuGSI8Hx2niCV/orig_4506181.svg" alt="KTO">
+  </div>
+  <div class="header-sep"></div>
+  <div class="header-title">H2 2026 Product Strategy · Opportunity-Solution Tree</div>
+  <div class="header-right">
+    <div class="intro-tab" id="intro-tab">Introduction</div>
+    <div class="header-badge">H2 2026</div>
+  </div>
+</div>
+
+<!-- Side drawer -->
+<div class="drawer" id="intro-drawer">
+  <div class="drawer-section">
+    <div class="drawer-heading">The strategic context</div>
+    <p>The 4% iGaming GGR share target by EOY 2026 translates to <strong>R$140M monthly GGR exit-rate by December</strong>, against a Jan–Apr 2026 baseline of R$65.9M/month. Closing this requires <strong>13.4% MoM growth, every month, July through December.</strong> H2 execution starts in July because operational capacity is consumed by the World Cup through June.</p>
+    <p>The base Product is operating against has shifted materially. Sophia data shows the typical FTD's early value has compressed since 2022 — the median D30 NGR per FTD halved (R$30 → R$15) while the mean held thanks to a fatter whale tail. This is a composition effect of modern acquisition channels, not a within-2026 deterioration. <strong>Product is operating against a base whose typical user generates less value than they used to, while the top of the curve grows.</strong> This dynamic shapes every Objective.</p>
+  </div>
+  <div class="drawer-section">
+    <div class="drawer-heading">The question this answers</div>
+    <p class="drawer-question"><strong>How does Product contribute to converting the H2 active base — existing actives, baseline FTDs, and WC FTDs — into the GGR exit-rate that closes the 4% gap?</strong></p>
+    <p>Product is one of several functions contributing to the company target. Marketing, Sportsbook, Casino, and CRM all carry a significant share of the work. This strategy describes Product's contribution, not the whole company plan.</p>
+    <p>OKR vocabulary used as intended: <strong>Objectives are aspirational and qualitative; Key Results are precise and binary — either achieved or not.</strong> Objectives describe the direction Product is committed to pulling in. Key Results commit to specific measurable outcomes against that direction.</p>
+  </div>
+</div>
+
+<div class="legend">
+  <div class="leg l-obj"><div class="leg-dot"></div>Objective</div>
+  <span class="leg-arr">›</span>
+  <div class="leg l-kr"><div class="leg-dot"></div>Key Result</div>
+  <span class="leg-arr">›</span>
+  <div class="leg l-opp"><div class="leg-dot"></div>Opportunity</div>
+  <span class="leg-arr">›</span>
+  <div class="leg l-sol"><div class="leg-dot"></div>Solution</div>
+</div>
+
+<div id="stage">
+  <svg id="svg-lines"></svg>
+  <div class="hint" id="hint">Click an objective to explore</div>
+</div>
+
+<div class="bottom-sheet" id="bottom-sheet">
+  <div class="bs-handle"></div>
+  <div class="bs-label" id="bs-label"></div>
+  <div class="bs-title" id="bs-title"></div>
+  <div class="bs-body"  id="bs-body"></div>
+</div>
+
+<script>
+// ── Data ──────────────────────────────────────────────────────────────────────
+const DATA = [
+  {
+    id:'o1', code:'O1',
+    title:'Bridge the drops across the Acquisition and Activation funnels',
+    krs:[
+      { id:'kr1_1', code:'KR1.1',
+        title:'Lift average Start-to-NRC conversion from 27% to 37% by Dec 2026',
+        opportunities:[
+          { id:'o1k1p1', title:'Decrease average TTV of 3.8 minutes by pushing friction to a moment of the journey with higher user intent.',
+            solutions:['Push Limits prompt before first gameplay','Push KYC as far as possible, either pre-deposit, pre-play or pre-withdrawal'] },
+          { id:'o1k1p2', title:'Decrease drop by removing or substituting unnecessary steps',
+            solutions:['Implement Apple SSO','Collect Address from KYC providers instead of prompting leads','Remove Phone validation','Remove email validation from non-SSO led registrations','Enable customers to browse the product before undergoing KYC'] },
+          { id:'o1k1p3', title:'Optimize the logged out experience for acquisition both in app and web',
+            solutions:['Display the full Casino portfolio in the logged out Casino Lobby and Promotions','Show the homepage for first visitors only, and tailor their follow-up experience based on cookies so they land in relevant content for them','Homepage revamp: cleaner layout and USP messaging','Vertical-specific Registration tracking (Homepage, Casino or SB) to tailor lead-recovery messaging'] }
+        ]
+      },
+      { id:'kr1_2', code:'KR1.2',
+        title:'Increase NRC to FTD conversion rate in under 30min from 31.51% to 50% by Dec 2026',
+        opportunities:[
+          { id:'o1k2p1', title:'Showcase value immediately after NRC via FOMO, rewards, handholding and preserving momentum',
+            solutions:['Free-to-play games','Prompt FTD in key product discovery journeys','Guided onboarding experience to remove confusion and decrease time to first bet','Allow onboardees to replicate influencer bets with pre-filled betslips, mitigating analysis paralysis, recommending an FTD amount and increasing trust in the brand'] },
+          { id:'o1k2p2', title:'Remove friction and cognitive load to FTD',
+            solutions:['Adjust presets and prefill','Suggest trending deposit amounts'] },
+          { id:'o1k2p3', title:'Prevent Geolocation blockers',
+            solutions:['Fallback to IP-based in case of Back-end failure','Onboard Smart Auth on KYC'] }
+        ]
+      }
+    ]
+  },
+  {
+    id:'o2', code:'O2',
+    title:'Convert H2 2026 FTD cohorts into habituated players within their first 30 days',
+    krs:[
+      { id:'kr2_1', code:'KR2.1',
+        title:'Increase the share of sportsbook-first FTD users who place live bets on at least 2 distinct calendar days within 14 days of FTD from 27.2% to 33% by end of H2 2026',
+        opportunities:[
+          { id:'o2k1p1', title:'Make the Live Lobby more user-friendly and tailored to different customer segments based on region and other variables',
+            solutions:['Build the capability to dynamically serve live, real-time odds data into digital banners and creatives across paid and owned channels. Banners auto-update with current odds without requiring manual creative refreshes.','Upsell live matches based on user history and cross-sell live matches to users based on their pre-match history'] },
+          { id:'o2k1p2', title:"Keep customers engaged to live matches while they're happening",
+            solutions:["Live-bet app widget: enable users to track the progress of events they've bet on even on lock-screen.",'Harness Pix Bio to quickly mitigate zero-balance ahead of a potential live-bet'] }
+        ]
+      },
+      { id:'kr2_2', code:'KR2.2',
+        title:'Increase the share of casino-first FTD users who achieve ≥3 sessions in week 2 from 32.3% to 37% by end of H2 2026',
+        opportunities:[
+          { id:'o2k2p1', title:'Improve the Live Casino lobby to increase engagement and consolidate LTV of 20–25% of our user base',
+            solutions:['Automatically assign customers to available Blackjack tables to prevent customers joining tables that have hit capacity and reduce bounce','Enrich live game thumbnail information to prevent bounce, including stats and video previews'] },
+          { id:'o2k2p2', title:'Cross-sell Casino verticals based on nudges and FOMO strategies rather than bonusing',
+            solutions:[] },
+          { id:'o2k2p3', title:'Gamify the user journey to push customers to a strong LTV signaling Loyalty Level (Gold+)',
+            solutions:['Embed Club KTO and Levels into the lobby and game experience to drive game adoption based on missions/tournaments','Loyalty Level visible progress bar and nudges to games and pending free spins that lead to upgrades'] },
+          { id:'o2k2p4', title:'Use cashback as a means to tone down risk aversion in early life and further reward and engage most valuable players',
+            solutions:['Grant cashback on losses to match the competition and tone down risk aversion','Strengthen the Cashback on Turnover mechanics and UX to turn it into a gamification asset especially for the first 2 weeks'] }
+        ]
+      },
+      { id:'kr2_3', code:'KR2.3',
+        title:'Launch a new GGR-generating mechanism (jackpot side-bet opt-in or equivalent) by end of Q3 2026',
+        opportunities:[
+          { id:'o2k3p1', title:"Jackpot is a standard part of most competitors' Casino offering — a clear gap. In Brazil, where average salaries are low, a life-changing Jackpot win is a powerful and emotionally resonant marketing message.",
+            solutions:['Create a full-fledged Jackpot in-house or via a 3rd party provider to cover multiple games in a single Jackpot pool to yield side bets (Games Global)','"KTO Lucky Flip": create a mini-jackpot in-house to appeal to both verticals — based on choosing heads or tails on a player vs player game, with fully configurable timeframes and admin fees.'] }
+        ]
+      }
+    ]
+  },
+  {
+    id:'o3', code:'O3',
+    title:'Establish the app as a strategic surface',
+    krs:[
+      { id:'kr3_1', code:'KR3.1',
+        title:'Lift app share of total KTO GGR from 7% to 60% by Dec 2026, while maintaining a sustained app store rating of ≥4.5 stars on both Android and iOS',
+        opportunities:[
+          { id:'o3k1p1', title:'Improve in-app UX and UI via app-specific measures such as haptics, animations, micro-interactions and transitions, making the experience immersive and predictable.', solutions:[] },
+          { id:'o3k1p2', title:'Make most remaining webview journeys native to improve navigation and performance and enable USPs', solutions:[] },
+          { id:'o3k1p3', title:'Improve My Account strategically to make activation and engagement levers more prominent and accessible — ID verification, cashback, reward redeeming, pending transactions, etc.',
+            solutions:['Redesign My Account to make it a feature management section rather than a feature discovery section.','Redesign of the wallet (transactions and bet history)','Redesign of "My Bonuses" to create a one-stop-shop for customers to check their rewards (potential and existing) and mitigate frustration and CX calls'] }
+        ]
+      },
+      { id:'kr3_2', code:'KR3.2',
+        title:'Ship at least 2 app-first growth loop features (engagement and/or acquisition) by end of Q3 2026. Loop-driven adoption should be traceable and isolable from Marketing/CRM amplification.',
+        opportunities:[
+          { id:'o3k2p1', title:'App-exclusive referral, social-media sharing and network-effect mechanisms that enable customers to propagate the brand in detriment of marketing or CRM-led strategies (cost-efficiency).',
+            solutions:['Achievements sharing','Boosted rewards for referring friends to play in the app','Bolão','"KTO Wrapped": allows users to relive their best moments on the platform throughout the year — in a visual, celebratory, and highly shareable way.'] }
+        ]
+      },
+      { id:'kr3_3', code:'KR3.3',
+        title:"Pivot to App as KTO's KPI tracking reference instead of Web, by achieving 100% app parity to web of events and KPI tracking on all system health, transactional and behavioral tracking tools by end of July 2026.",
+        opportunities:[]
+      }
+    ]
+  }
+];
+
+// ── Explanations (from strategy doc) ─────────────────────────────────────────
+const EXPLANATIONS = {
+  o1: "The Lead-to-FTD chain has multiple Product-owned leakage points: form abandonment at registration start, identity verification completion, and the NRC-to-deposit handoff. These are momentum and orientation problems Product owns, and closing these gaps compounds the value of every acquired lead.",
+  o2: "H2 2026 product effort concentrates on the activation window — the first 30 days after first deposit — because this is where LTV is won or lost. Validated across 270,000+ new depositors from H1 2025 through H1 2026, two early-life behaviors predict materially higher 180-day NGR: live-betting recurrence for sportsbook users, and week-1-to-week-2 session continuity for casino users.",
+  o3: "Mobile App First is a named pillar of the KTO 2026 strategy. The app gives us push notifications, home-screen habit, one-tap deposit, and a direct line to the customer that no intermediary can throttle. Per active day the typical dual-surface user is already ~0.87× as valuable on the app as on web. The 60% app GGR share target isn't internal ambition — it's defense. Below 60% by December likely means losing app-surface share to competitors, not just missing an internal goal.",
+  kr1_1: "Registration is extremely front-loaded, even though it enables customers to return and finish later. This KR is leveraged by friction removal (KYC, Geolocation), which decreases time to value (currently good, in under 4 minutes) and increases the likelihood of leads becoming NRCs within D0 (currently at 28%), preserving intent and sunk cost fallacy.",
+  kr1_2: "Activation drops significantly after 30 min. Past friction such as bank account registration contributed heavily to FTD drop. FOMO initiatives — friction removal, browsing before depositing, bonuses redeemable after FTD — have the potential to strengthen intent and preserve momentum, lowering the need for costly CRM-led recovery journeys.",
+  kr2_1: "Live-bet recurrence is the strongest validated LTV predictor for sportsbook-first new users. These users generate +R$224 D180 NGR over non-recurrers — a 78% improvement. The metric ensures depth of engagement rather than trial. Surfaces that move it are product-led: live-event entry points, in-play UX clarity, live-bet onboarding tutorials, and push notifications during live events the user has previously bet on.",
+  kr2_2: "Casino-first users have a trial-versus-bonding asymmetry: 70% reach meaningful engagement in week 1, but only 30% sustain it in week 2. This cliff has held steady across 255,000 users over 16 months — it is a structural feature of the product, not a market artifact. Gamification (Club KTO) and Live Casino improvements (20–25% rev share) should leverage this.",
+  kr2_3: "Side-bets and multiplay not only move GGR but also cover the product diversity that favours good LTV. Every opted-in player generates an admin-fee revenue stream on top of base turnover. Tiered jackpot pool design lets Marketing and Retention both pull on the same primitive: the big aspirational prize feeds brand narrative, the smaller frequent prizes feed retention.",
+  kr3_1: "The 4.5-star rating is a hard guardrail, not a nice-to-have. Adoption that recedes when users dislike the product is failure dressed as success. The squad should treat rating as a release-gate concern, not a trailing measurement.",
+  kr3_2: "Refer-a-Friend amplification, achievement sharing, and similar in-product loop surfaces provide the mechanism for product-driven adoption rather than marketing-driven adoption. App-first by design — loop-driven adoption must be traceable and isolable from Marketing/CRM amplification.",
+  kr3_3: "We currently have 97 web events against 59 app events on Mixpanel, and monitoring is mostly web-based — inaccurate in a context where we predict to shift the majority of the audience to app. Measuring app-first becomes the rule.",
+};
+
+// ── Helpers ───────────────────────────────────────────────────────────────────
+function esc(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function hi(s) {
+  return esc(s).replace(/(\d+(?:[.,]\d+)?%|≥[\d.]+[%\s]?(?:stars?)?|Q[1-4]\s\d{4})/g,
+    '<span class="n-num">$1</span>');
+}
+
+// ── Objective colour palettes ─────────────────────────────────────────────────
+// Three distinct hues — one per objective. Each level gets progressively lighter.
+const OBJ_HUES = [354, 212, 165]; // rose · sky-blue · sage-teal
+
+// Pre-build a map from any node ID → its objective index (0/1/2)
+const objIdxMap = {};
+DATA.forEach((obj, i) => {
+  objIdxMap[obj.id] = i;
+  obj.krs.forEach(kr => {
+    objIdxMap[kr.id] = i;
+    kr.opportunities.forEach(opp => {
+      objIdxMap[opp.id] = i;
+      opp.solutions.forEach((_, si) => { objIdxMap[`${opp.id}_s${si}`] = i; });
+      objIdxMap[`${opp.id}_tbd`] = i;
+    });
+  });
+});
+
+// Shade definitions per depth level
+const DEPTH_SHADES = {
+  obj: { bgL: 91, bgS: 58, borderL: 52, borderS: 62, codeL: 36, titleL: 18 },
+  kr:  { bgL: 95, bgS: 38, borderL: 62, borderS: 50, codeL: 40, titleL: 20 },
+  opp: { bgL: 97, bgS: 20, borderL: 72, borderS: 35, codeL: 50, titleL: 22 },
+  sol: { bgL: 99, bgS:  8, borderL: 78, borderS: 25, codeL: 55, titleL: 24 },
+};
+
+function paintCard(el, id, type) {
+  const idx = objIdxMap[id] ?? 0;
+  const h   = OBJ_HUES[idx];
+  const d   = DEPTH_SHADES[type] || DEPTH_SHADES.sol;
+
+  el.style.background       = `hsl(${h},${d.bgS}%,${d.bgL}%)`;
+  el.style.borderLeftColor  = `hsl(${h},${d.borderS}%,${d.borderL}%)`;
+  // Override the full border so KR's white border doesn't show on light bg
+  el.style.borderTopColor   = `hsla(${h},${d.borderS - 10}%,${d.borderL + 10}%,0.35)`;
+  el.style.borderRightColor = el.style.borderTopColor;
+  el.style.borderBottomColor= el.style.borderTopColor;
+  el.style.boxShadow        = `0 2px 10px hsla(${h},45%,55%,0.09), inset 0 1px 0 rgba(255,255,255,0.8)`;
+
+  const code  = el.querySelector('.n-code');
+  const title = el.querySelector('.n-title');
+  if (code)  code.style.color  = `hsl(${h},${d.borderS}%,${d.codeL}%)`;
+  if (title) {
+    title.style.color = `hsl(${h},15%,${d.titleL}%)`;
+    title.querySelectorAll('.n-num').forEach(n => {
+      n.style.color = `hsl(${h},${d.borderS + 10}%,${d.codeL - 4}%)`;
+    });
+  }
+}
+
+// ── State ─────────────────────────────────────────────────────────────────────
+let S = { level: 0, obj: null, kr: null, opp: null };
+
+// ── DOM setup ─────────────────────────────────────────────────────────────────
+const stage   = document.getElementById('stage');
+const svgEl   = document.getElementById('svg-lines');
+const hint    = document.getElementById('hint');
+const nodeEls = {}; // id -> element
+
+function makeNodeEl(type, id, codeText, titleHtml, isTbd) {
+  const div = document.createElement('div');
+  div.className = `node node-${type}${isTbd ? ' tbd' : ''}`;
+  div.dataset.id = id;
+  div.innerHTML = `<div class="n-pad"><div class="n-code">${codeText}</div><div class="n-title">${titleHtml}</div></div>`;
+  stage.appendChild(div);
+  nodeEls[id] = div;
+  return div;
+}
+
+// Create objective nodes
+DATA.forEach(obj => {
+  makeNodeEl('obj', obj.id, obj.code, esc(obj.title));
+  obj.krs.forEach(kr => {
+    makeNodeEl('kr', kr.id, kr.code, hi(kr.title));
+    kr.opportunities.forEach((opp, oi) => {
+      makeNodeEl('opp', opp.id, `Opportunity ${oi+1}`, esc(opp.title));
+      opp.solutions.forEach((sol, si) => {
+        const sid = `${opp.id}_s${si}`;
+        makeNodeEl('sol', sid, `Solution ${si+1}`, esc(sol));
+      });
+    });
+    if (kr.opportunities.length === 0) {
+      // placeholder so KR isn't dead-end visually
+    }
+  });
+});
+
+// ── Layout ────────────────────────────────────────────────────────────────────
+// Layout constants
+const PAD_L   = 48;   // left edge padding
+const PAD_R   = 48;   // right edge padding
+const COL_GAP = 72;   // horizontal gap between left-col and right-col
+const GAP_Y   = 14;   // vertical gap between cards
+
+// Left col uses the same width as the centered card so nothing resizes
+const LEFT_W      = 320;
+const RIGHT_W_MIN = 260;
+
+function stageSize() {
+  const sw = window.innerWidth || stage.clientWidth || 1200;
+  const chromeH = stage.getBoundingClientRect().top || (window.innerHeight - stage.clientHeight) || 85;
+  // Subtract sheet height when open so the tree always sits above it
+  const sheetH = (typeof bsEl !== 'undefined' && bsEl.classList.contains('open'))
+    ? bsEl.offsetHeight : 0;
+  const sh = (window.innerHeight || stage.clientHeight + chromeH) - chromeH - sheetH;
+  return { sw, sh };
+}
+
+// Estimate card height based on title length and type
+function estimateH(type, text, compact, cardW) {
+  if (compact) {
+    const contentW = Math.max(80, (cardW || LEFT_W) - 28);
+    const lines    = Math.max(1, Math.ceil(text.length / Math.max(1, Math.floor(contentW / (10.5 * 0.62)))));
+    return 20 + 14 + lines * 15;
+  }
+  const padV     = 28;
+  const hPad     = 34;
+  const contentW = Math.max(80, (cardW || LEFT_W) - hPad);
+  const fontSize = type === 'obj' ? 13 : 12;
+  const charsPerLine = Math.max(1, Math.floor(contentW / (fontSize * 0.62)));
+  const lines    = Math.max(1, Math.ceil(text.length / charsPerLine));
+  return padV + 16 + lines * 17;
+}
+
+function rightCardW() {
+  const { sw } = stageSize();
+  // When level > 0: right area starts after left col
+  // When level === 0: center column
+  const available = sw - PAD_L - LEFT_W - COL_GAP - PAD_R;
+  return Math.max(RIGHT_W_MIN, Math.min(360, available));
+}
+
+function centerCardW() {
+  const { sw } = stageSize();
+  return Math.min(340, sw - PAD_L*2);
+}
+
+// Place items with the selected one locked at sh/2 — siblings fan above/below it.
+// This keeps the selected path as a horizontal spine across all columns.
+function distributeAroundSelected(items, selectedId, x, colW, sh, layout) {
+  const GAP = 14;
+  const raw = items.map(it => (it.titleHtml || it.text || '').replace(/<[^>]*>/g, ''));
+  const heights = raw.map((t, i) => Math.max(estimateH(items[i].type, t, false, colW), 60));
+  const selIdx = items.findIndex(it => it.id === selectedId);
+  if (selIdx === -1) { distributeItems(items, x, colW, sh, layout); return; }
+
+  const selH  = heights[selIdx];
+  const selTop = sh / 2 - selH / 2;
+
+  // Selected item — centred at sh/2, full opacity
+  layout[items[selIdx].id] = {
+    left: x, top: selTop, width: colW,
+    opacity: 1, gone: false, compact: false, clickable: true, greyed: false
+  };
+
+  // Items ABOVE the selected (reversed order so closest is adjacent)
+  let y = selTop - GAP;
+  for (let i = selIdx - 1; i >= 0; i--) {
+    y -= heights[i];
+    layout[items[i].id] = {
+      left: x, top: y, width: colW,
+      opacity: 1, gone: false, compact: false, clickable: true, greyed: true
+    };
+    y -= GAP;
+  }
+
+  // Items BELOW the selected
+  y = selTop + selH + GAP;
+  for (let i = selIdx + 1; i < items.length; i++) {
+    layout[items[i].id] = {
+      left: x, top: y, width: colW,
+      opacity: 1, gone: false, compact: false, clickable: true, greyed: true
+    };
+    y += heights[i] + GAP;
+  }
+}
+
+// Distribute a list of items vertically, centered, with a max-gap cap
+function distributeItems(items, x, colW, sh, layout) {
+  if (!items.length) return;
+  const heights = items.map(it =>
+    Math.max(estimateH(it.type, (it.titleHtml || it.text || '').replace(/<[^>]*>/g,''), false, colW), 60)
+  );
+  const maxGap = 18;
+  const step   = Math.min((sh - 80) / items.length, Math.max(...heights) + maxGap);
+  const totalH = step * items.length;
+  const startY = sh / 2 - totalH / 2;
+  items.forEach((it, i) => {
+    const h = heights[i];
+    layout[it.id] = {
+      left: x, top: startY + step * i + step / 2 - h / 2,
+      width: colW, opacity: 1, gone: false, compact: false,
+      clickable: !it.tbd && (it.clickable !== false),
+      greyed: !!it.greyed
+    };
+  });
+}
+
+// Build the right-column item list for the current level
+function buildRightItems() {
+  if (S.level === 1) {
+    return S.obj.krs.map(kr => ({ type:'kr', id:kr.id, titleHtml:hi(kr.title), clickable:true }));
+  }
+  if (S.level === 2) {
+    return S.kr.opportunities.map((opp, oi) => ({ type:'opp', id:opp.id, titleHtml:esc(opp.title), clickable:true }));
+  }
+  if (S.level === 3) {
+    if (S.opp.solutions.length > 0)
+      return S.opp.solutions.map((sol, si) => ({ type:'sol', id:`${S.opp.id}_s${si}`, titleHtml:esc(sol), clickable:false }));
+    return [{ type:'sol', id:`${S.opp.id}_tbd`, titleHtml:'Solutions to be defined', clickable:false, tbd:true }];
+  }
+  return [];
+}
+
+// Compute layout for all node IDs in current state
+function computeLayout() {
+  const { sw, sh } = stageSize();
+  const layout = {};
+
+  // Start all as gone
+  Object.keys(nodeEls).forEach(id => {
+    layout[id] = { left: sw*0.5, top: sh*0.5, width: 0, opacity: 0, gone: true, compact: false, clickable: false };
+  });
+
+  // ── Level 0: three objectives centered ──────────────────────────────────────
+  if (S.level === 0) {
+    const cw = centerCardW();
+    const cx = sw / 2 - cw / 2;
+    const heights = DATA.map(obj => Math.max(estimateH('obj', obj.title, false, cw), 60));
+    const step    = Math.min((sh - 96) / DATA.length, Math.max(...heights) + 20);
+    const startY  = sh / 2 - (step * DATA.length) / 2;
+    DATA.forEach((obj, i) => {
+      const h = heights[i];
+      layout[obj.id] = { left: cx, top: startY + step*i + step/2 - h/2, width: cw, opacity:1, gone:false, compact:false, clickable:true };
+    });
+    return layout;
+  }
+
+  // ── Decide: multi-column or left-stack? ──────────────────────────────────────
+  const MC_GAP  = 48;
+  const MC_PAD  = 40;
+  const numCols = S.level + 1; // level1→2cols, level2→3cols, level3→4cols
+
+  // colW is always derived from the 4-column (deepest) layout so cards never
+  // resize as you drill deeper — only the number of visible columns changes.
+  const MAX_COLS  = 4;
+  const colW      = Math.min(320, Math.floor((sw - 2 * MC_PAD - (MAX_COLS - 1) * MC_GAP) / MAX_COLS));
+  const colWidths = Array(numCols).fill(colW);
+  const useMulti  = colW >= 180;
+
+  // Hide non-selected objectives (shared by both modes)
+  const hideObj = (id) => {
+    layout[id] = { left: -400, top: sh/2, width: LEFT_W, opacity: 0, gone: true, compact: false, clickable: false };
+  };
+
+  if (useMulti) {
+    // ── Multi-column layout ───────────────────────────────────────────────────
+    const totalW = numCols * colW + (numCols - 1) * MC_GAP;
+    const startX = Math.max(MC_PAD, (sw - totalW) / 2);
+    const colX   = Array.from({length: numCols}, (_, i) => startX + i * (colW + MC_GAP));
+
+    // Col 0: ALL objectives — selected locked at vertical centre, siblings fan above/below
+    distributeAroundSelected(
+      DATA.map(obj => ({ type:'obj', id:obj.id, titleHtml:esc(obj.title) })),
+      S.obj.id, colX[0], colW, sh, layout
+    );
+
+    // Col 1 (level ≥ 2): ALL KRs of selected obj — selected at centre, siblings greyed
+    if (S.level >= 2) {
+      distributeAroundSelected(
+        S.obj.krs.map(kr => ({ type:'kr', id:kr.id, titleHtml:hi(kr.title) })),
+        S.kr.id, colX[1], colW, sh, layout
+      );
+    }
+
+    // Col 2 (level ≥ 3): ALL opps of selected KR — selected at centre, siblings greyed
+    if (S.level >= 3) {
+      distributeAroundSelected(
+        S.kr.opportunities.map(opp => ({ type:'opp', id:opp.id, titleHtml:esc(opp.title) })),
+        S.opp.id, colX[2], colW, sh, layout
+      );
+    }
+
+    // Last col: current level's children (not greyed — these are the new branch)
+    const rightItems = buildRightItems();
+    distributeItems(rightItems, colX[numCols - 1], colW, sh, layout);
+
+  } else {
+    // ── Left-stack layout (narrow screens) ───────────────────────────────────
+    const rcw    = rightCardW();
+    const rightX = PAD_L + LEFT_W + COL_GAP;
+
+    // Left column: ancestors stacked
+    const ancestors = [];
+    if (S.obj) ancestors.push({ type:'obj', item:S.obj, text:S.obj.title });
+    if (S.kr)  ancestors.push({ type:'kr',  item:S.kr,  text:S.kr.title  });
+    if (S.opp) ancestors.push({ type:'opp', item:S.opp, text:S.opp.title });
+
+    let leftH = ancestors.reduce((s, a) => s + estimateH(a.type, a.text, false, LEFT_W) + GAP_Y, -GAP_Y);
+    let ly = sh / 2 - leftH / 2;
+    ancestors.forEach(({ type, item }) => {
+      const h = estimateH(type, item.title || '', false, LEFT_W);
+      layout[item.id] = { left: PAD_L, top: ly, width: LEFT_W, opacity:1, gone:false, compact:false, clickable:true };
+      ly += h + GAP_Y;
+    });
+
+    DATA.forEach(obj => { if (!layout[obj.id] || layout[obj.id].gone !== false) hideObj(obj.id); });
+
+    // Right column: children list
+    const rightItems = buildRightItems().map(it => ({ ...it, width: rcw }));
+    distributeItems(rightItems.map(it => ({...it, titleHtml: it.titleHtml})), rightX, rcw, sh, layout);
+  }
+
+  return layout;
+}
+
+// ── Apply layout ──────────────────────────────────────────────────────────────
+let lineTimer = null;
+let firstRender = true;
+
+function applyLayout(incoming, srcId) {
+  if (firstRender) {
+    Object.values(nodeEls).forEach(el => el.style.transition = 'none');
+    firstRender = false;
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      Object.values(nodeEls).forEach(el => el.style.transition = '');
+    }));
+  }
+
+  // Snapshot source card position BEFORE layout moves it
+  let src = null;
+  if (incoming && srcId) {
+    const el = nodeEls[srcId];
+    if (el && !el.classList.contains('gone')) {
+      src = {
+        x: parseFloat(el.style.left) || 0,
+        y: parseFloat(el.style.top)  || 0,
+        w: parseFloat(el.style.width) || LEFT_W,
+        h: el.getBoundingClientRect().height || 90,
+      };
+    }
+  }
+
+  const layout = computeLayout();
+
+  // Nodes that are newly becoming visible — snap them to the source origin first
+  if (src) {
+    const fresh = Object.entries(layout)
+      .filter(([id, pos]) => !pos.gone && nodeEls[id]?.classList.contains('gone'))
+      .map(([id]) => id);
+
+    fresh.forEach(id => {
+      const el = nodeEls[id];
+      el.classList.remove('gone');
+      el.style.transition = 'none';
+      el.style.left    = (src.x + src.w) + 'px';
+      el.style.top     = (src.y + src.h / 2) + 'px';
+      el.style.width   = layout[id].width + 'px';
+      el.style.opacity = '0';
+      el.style.transform = 'scale(0.88)';
+    });
+    // Force reflow so the snapped position is painted before we re-enable transition
+    void stage.offsetHeight;
+    fresh.forEach(id => { nodeEls[id].style.transition = ''; });
+  }
+
+  // Apply final positions for every node
+  Object.entries(layout).forEach(([id, pos]) => {
+    const el = nodeEls[id];
+    if (!el) return;
+    el.classList.remove('gone', 'compact', 'clickable', 'greyed', 'incoming');
+    if (pos.gone) {
+      el.classList.add('gone');
+    } else {
+      el.style.left      = pos.left + 'px';
+      el.style.top       = pos.top  + 'px';
+      el.style.width     = pos.width + 'px';
+      el.style.height    = pos.height ? pos.height + 'px' : '';
+      el.style.opacity   = pos.greyed ? '0.22' : String(pos.opacity);
+      el.style.transform = '';
+      if (pos.compact)   el.classList.add('compact');
+      if (pos.clickable) el.classList.add('clickable');
+      if (pos.greyed)    el.classList.add('greyed');
+      // Apply objective colour palette
+      const nodeType = ['obj','kr','opp','sol'].find(t => el.classList.contains(`node-${t}`));
+      if (nodeType) paintCard(el, id, nodeType);
+    }
+  });
+
+  // Fade lines out, then redraw once the source card's transition ends
+  svgEl.style.opacity = '0';
+  clearTimeout(lineTimer);
+
+  // Find the source element (deepest ancestor) and wait for its transitionend.
+  // Fall back to a hard timeout in case the element doesn't animate (same position).
+  const _srcIds = [S.obj?.id, S.kr?.id, S.opp?.id].filter(Boolean);
+  const _srcEl  = _srcIds.length ? nodeEls[_srcIds[_srcIds.length - 1]] : null;
+
+  let _done = false;
+  const _finish = () => {
+    if (_done) return;
+    _done = true;
+    if (_srcEl) _srcEl.removeEventListener('transitionend', _onEnd);
+    clearTimeout(lineTimer);
+    drawLines();
+    svgEl.style.opacity = '1';
+  };
+  const _onEnd = (e) => { if (e.propertyName === 'left' || e.propertyName === 'top') _finish(); };
+  if (_srcEl) _srcEl.addEventListener('transitionend', _onEnd);
+  // Hard fallback: slightly past the CSS duration (720ms)
+  lineTimer = setTimeout(_finish, 820);
+}
+
+// ── Draw SVG connector lines ──────────────────────────────────────────────────
+function drawLines() {
+  if (S.level === 0) { svgEl.innerHTML = ''; return; }
+
+  const stageRect = stage.getBoundingClientRect();
+  let paths = '';
+
+  // Helper: draw bezier from one element's right-center to another's left-center
+  const edge = (fromEl, toEl, color) => {
+    if (!fromEl || !toEl) return;
+    if (fromEl.classList.contains('gone') || toEl.classList.contains('gone')) return;
+    const fr = fromEl.getBoundingClientRect();
+    const tr = toEl.getBoundingClientRect();
+    const x1 = fr.right - stageRect.left,  y1 = fr.top + fr.height/2 - stageRect.top;
+    const x2 = tr.left  - stageRect.left,  y2 = tr.top + tr.height/2 - stageRect.top;
+    const mx = (x1 + x2) / 2;
+    paths += `<path d="M${x1},${y1} C${mx},${y1} ${mx},${y2} ${x2},${y2}" `
+           + `stroke="${color}" stroke-width="1.5" fill="none" stroke-linecap="round"/>`;
+  };
+
+  // Single line colour derived from the current objective's palette hue
+  const _h   = OBJ_HUES[objIdxMap[S.obj?.id] ?? 0];
+  const _col = `hsla(${_h},52%,52%,0.45)`;
+
+  // Draw ALL inter-column connections, not just the last one
+  if (S.level >= 1) {
+    if (S.level === 1) {
+      S.obj.krs.forEach(kr => edge(nodeEls[S.obj.id], nodeEls[kr.id], _col));
+    } else {
+      edge(nodeEls[S.obj.id], nodeEls[S.kr.id], _col);
+    }
+  }
+
+  if (S.level >= 2) {
+    if (S.level === 2) {
+      S.kr.opportunities.forEach(opp => edge(nodeEls[S.kr.id], nodeEls[opp.id], _col));
+    } else {
+      edge(nodeEls[S.kr.id], nodeEls[S.opp.id], _col);
+    }
+  }
+
+  if (S.level >= 3) {
+    const solIds = S.opp.solutions.length > 0
+      ? S.opp.solutions.map((_, i) => `${S.opp.id}_s${i}`)
+      : [`${S.opp.id}_tbd`];
+    solIds.forEach(id => edge(nodeEls[S.opp.id], nodeEls[id], _col));
+  }
+
+  svgEl.innerHTML = paths;
+}
+
+// ── State transitions ─────────────────────────────────────────────────────────
+function goToLevel0() {
+  S = { level: 0, obj: null, kr: null, opp: null };
+  hint.style.opacity = '1';
+  closeSheet();
+  applyLayout(false);
+}
+
+function selectObj(obj) {
+  const srcId = obj.id;
+  S = { level: 1, obj: obj, kr: null, opp: null };
+  hint.style.opacity = '0';
+  openSheet('Objective', obj.title, obj.id);
+  applyLayout(true, srcId);
+}
+
+function selectKr(kr) {
+  const srcId = kr.id;
+  S = { ...S, level: 2, kr: kr, opp: null };
+  openSheet('Key Result', kr.title, kr.id);
+  applyLayout(true, srcId);
+}
+
+function selectOpp(opp) {
+  const srcId = opp.id;
+  S = { ...S, level: 3, opp: opp };
+  closeSheet();
+  applyLayout(true, srcId);
+}
+
+function goBack() {
+  if (S.level === 1) goToLevel0();
+  else if (S.level === 2) { S = { ...S, level: 1, kr: null, opp: null }; applyLayout(false); }
+  else if (S.level === 3) { S = { ...S, level: 2, opp: null };            applyLayout(false); }
+}
+
+// ── Click wiring ──────────────────────────────────────────────────────────────
+stage.addEventListener('click', e => {
+  const card = e.target.closest('.node.clickable');
+  if (!card) return;
+  const id = card.dataset.id;
+
+  if (S.level === 0) {
+    const obj = DATA.find(o => o.id === id);
+    if (obj) selectObj(obj);
+    return;
+  }
+
+  // Clicking the SELECTED ancestor → navigate back to that level's list
+  if (S.obj && id === S.obj.id) { goToLevel0(); return; }
+  if (S.kr  && id === S.kr.id)  { S = { ...S, level: 1, kr: null, opp: null }; updateCrumb(); applyLayout(false); return; }
+  if (S.opp && id === S.opp.id) { S = { ...S, level: 2, opp: null };           updateCrumb(); applyLayout(false); return; }
+
+  // Clicking a GREYED sibling → switch to that branch
+  const sibObj = DATA.find(o => o.id === id);
+  if (sibObj) { selectObj(sibObj); return; }
+
+  if (S.obj) {
+    const sibKr = S.obj.krs.find(k => k.id === id);
+    if (sibKr) { selectKr(sibKr); return; }
+  }
+  if (S.kr) {
+    const sibOpp = S.kr.opportunities.find(o => o.id === id);
+    if (sibOpp) { selectOpp(sibOpp); return; }
+  }
+
+  // Clicking a right-column item → navigate forward
+  if (S.level === 1) {
+    const kr = S.obj.krs.find(k => k.id === id);
+    if (kr) selectKr(kr);
+  } else if (S.level === 2) {
+    const opp = S.kr.opportunities.find(o => o.id === id);
+    if (opp) selectOpp(opp);
+  }
+});
+
+// ── Init ──────────────────────────────────────────────────────────────────────
+// All nodes start gone
+Object.values(nodeEls).forEach(el => {
+  el.classList.add('gone');
+  el.style.left    = '0px';
+  el.style.top     = '0px';
+  el.style.width   = '0px';
+  el.style.opacity = '0';
+});
+
+// Initial render after a frame (so clientWidth/clientHeight are available)
+requestAnimationFrame(() => {
+  applyLayout(false);
+  // Redo after fonts/layout settle
+  setTimeout(() => applyLayout(false), 100);
+});
+
+window.addEventListener('resize', () => applyLayout(false));
+
+// ── Bottom sheet ──────────────────────────────────────────────────────────────
+const bsEl    = document.getElementById('bottom-sheet');
+const bsLabel = document.getElementById('bs-label');
+const bsTitle = document.getElementById('bs-title');
+const bsBody  = document.getElementById('bs-body');
+
+function openSheet(typeLabel, title, id) {
+  const body = EXPLANATIONS[id] || '';
+  if (!body) return;
+  bsLabel.textContent = typeLabel;
+  bsTitle.textContent = title;
+  bsBody.textContent  = body;
+  const h = OBJ_HUES[objIdxMap[id] ?? 0];
+  bsEl.style.borderTopColor = `hsl(${h},52%,58%)`;
+  bsEl.style.borderTopWidth = '3px';
+  bsEl.classList.add('open');
+  // Reflow after one frame so offsetHeight is correct, then lift the tree
+  requestAnimationFrame(() => applyLayout(false));
+}
+
+function closeSheet() {
+  if (!bsEl.classList.contains('open')) return;
+  bsEl.classList.remove('open');
+  applyLayout(false);
+}
+
+// Close when clicking empty board space (not a card)
+stage.addEventListener('click', e => {
+  if (!e.target.closest('.node')) closeSheet();
+});
+
+// ── Introduction drawer toggle ────────────────────────────────────────────────
+const introDrawer = document.getElementById('intro-drawer');
+const introTab    = document.getElementById('intro-tab');
+
+function closeDrawer() {
+  introDrawer.classList.remove('open');
+  introTab.classList.remove('open');
+}
+
+introTab.addEventListener('click', () => {
+  const isOpen = introDrawer.classList.toggle('open');
+  introTab.classList.toggle('open', isOpen);
+});
+
+// Clicking anywhere on the stage board closes the drawer
+stage.addEventListener('click', closeDrawer);
+
+// Redraws lines once all position transitions have settled (robust line recovery)
+let _lineRafDebounce = null;
+stage.addEventListener('transitionend', e => {
+  if (e.propertyName === 'left' || e.propertyName === 'top' || e.propertyName === 'width') {
+    clearTimeout(_lineRafDebounce);
+    _lineRafDebounce = setTimeout(() => {
+      if (S.level > 0) { drawLines(); svgEl.style.opacity = '1'; }
+    }, 40);
+  }
+});
+</script>
+</body>
+</html>
